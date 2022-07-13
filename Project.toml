@@ -1,0 +1,13 @@
+name = "OMmodp"
+uuid = "1a2a6402-9e10-4675-8fe2-61b332f46bc2"
+authors = ["Adrien Poteaux <adrien.poteaux@univ-lille.fr> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
