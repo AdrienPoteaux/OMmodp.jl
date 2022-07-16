@@ -1,8 +1,30 @@
-using OMmodp
-using Nemo
+function TestAppRoot()
+    R, x = PolynomialRing(GF(211), "x")
+    T=ResidueRing(R, x^33) # needed ?
+    L,y=PolynomialRing(T,"y")
+    F=y^4+x^3*y^3+209*x^3*y^2+x^6
+
+    phi=AppRoot(F,1)
+    if (F-phi != 0)
+        return false
+    end
+
+    phi=AppRoot(F,4)
+
+    if (degree(F-phi^4)>2)
+        return false
+    end
+
+    phi=AppRoot(F,2)
+
+    if (degree(F-phi^2)>2)
+        return false
+    end
+
+    return true
+end
 
 function TestTaylorExp()
-    res=true
     R, x = PolynomialRing(GF(211), "x")
     T=ResidueRing(R, x^33) # needed ?
     L,y=PolynomialRing(T,"y")
@@ -15,7 +37,7 @@ function TestTaylorExp()
     end
     
     if somme != F
-        res=false
+        return false
     end
 
     phi=y^2+(53*x^10+209*x^2)*y+107*x^12+x^4+103*x^3
@@ -28,8 +50,8 @@ function TestTaylorExp()
     end
     
     if somme != F
-        res=false
+        return false
     end
 
-    return res
+    return true
 end

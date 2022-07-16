@@ -5,5 +5,6 @@ module OMmodp
 include("subroutines.jl")
 
 export TaylorExp
+export AppRoot
 
 end
