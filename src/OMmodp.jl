@@ -6,7 +6,8 @@ using Nemo
 
 include("subroutines.jl")
 
-export TaylorExp
 export AppRoot
+export TaylorExp
+export PhiExp
 
 end

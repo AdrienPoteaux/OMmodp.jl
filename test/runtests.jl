@@ -10,4 +10,5 @@ include("test-subroutines.jl")
     # Il faut definir le corps de base (F_211)[x][y] ou un truc du genre
     @test TestTaylorExp()
     @test TestAppRoot()
+    @test TestPhiExp()
 end

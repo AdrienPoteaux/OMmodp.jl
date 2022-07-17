@@ -53,10 +53,21 @@ function _TaylorExp(F, phi)
     m=phi.length-1
     k=div(d,m)
     if k<=0
-       return F
+       return [F]
     end
     k=div(k+1,2) # ceil(k/2)
     tmp=phi^k
     q,r=divrem(F,tmp)
     return [_TaylorExp(r,phi);_TaylorExp(q,phi)]
+end
+
+function PhiExp(F,Phi)
+#  In: F K[x]/(x^n)[y], Phi a list of such polynomials with "dividing degrees"
+# Out: the Phi-adic expansion of F
+    k=length(Phi)
+    tmp=TaylorExp(F,Phi[k])
+    if k>1
+        return [PhiExp(i,Phi[1:k-1]) for i in tmp]
+    end
+    return tmp
 end
