@@ -16,7 +16,7 @@ function truncate(F,n)
 end
 
 function AppRoot(F,N)
-    #  In: F in K[x]/(x^n)[y] of degree d, N dividing d
+    #  In: F in K[[x]][y] of degree d, N dividing d
     # Out: the N-th approximate root of F
     d=F.length-1
     if d % N != 0
@@ -43,7 +43,7 @@ function AppRoot(F,N)
 end
 
 function TaylorExp(F, phi)
-    #  In: F, phi in K[x]/(x^n)[y]
+    #  In: F, phi in K[[x]][y]
     # Out: [a_0,...,a_s] s.t. F=a_0+a_1*phi+...+a_s*phi^s
     return _TaylorExp(F,phi)
 end
@@ -62,7 +62,7 @@ function _TaylorExp(F, phi)
 end
 
 function PhiExp(F,Phi)
-#  In: F K[x]/(x^n)[y], Phi a list of such polynomials with "dividing degrees"
+#  In: F K[[x]][y], Phi a list of such polynomials with "dividing degrees"
 # Out: the Phi-adic expansion of F
     k=length(Phi)
     tmp=TaylorExp(F,Phi[k])
