@@ -15,6 +15,13 @@ function truncate(F,n)
     return K((F.coeffs)[1:n])
 end
 
+"""
+    AppRoot(F,N)
+
+Computes the N-th approximate root of F
+
+We assume that N divides deg(F)
+"""
 function AppRoot(F,N)
     #  In: F in K[[x]][y] of degree d, N dividing d
     # Out: the N-th approximate root of F
@@ -42,6 +49,11 @@ function AppRoot(F,N)
     return reciprocal(truncate(psi,m+1))
 end
 
+"""
+    TaylorExp(F, phi)
+
+Computes the Taylor expansion of F according to phi (see e.g. Modern Computer Algebra, section 9.2)
+"""
 function TaylorExp(F, phi)
     #  In: F, phi in K[[x]][y]
     # Out: [a_0,...,a_s] s.t. F=a_0+a_1*phi+...+a_s*phi^s
@@ -61,6 +73,15 @@ function _TaylorExp(F, phi)
     return [_TaylorExp(r,phi);_TaylorExp(q,phi)]
 end
 
+
+
+"""
+    PhiExp(F,Phi)
+
+Computes the Phi-adic expansion of F
+
+Phi is a table of polynomials
+"""
 function PhiExp(F,Phi)
 #  In: F K[[x]][y], Phi a list of such polynomials with "dividing degrees"
 # Out: the Phi-adic expansion of F

@@ -8,6 +8,15 @@ function GaussVal(F)
     return tmp
 end
 
+"""
+    PhiVal(elt, vals)
+
+Compute the valuation of elt
+
+# arguments
+- elt a table representing some Phi-adic expansion (i.e. a table of table of ... of polynomials), as given by PhiExp
+- vals the (augmented) valuations of the Phi[i]
+"""
 function PhiVal(elt, vals)
 #  In: elt some Phi expansion of F in K[[x]][y], vals the valuation of the key polynomials
 # Out: the associated valuation (assumed positive, as we return -1 for the 0 polynomial)
