@@ -1,7 +1,11 @@
 function GaussVal(F)
 #  In: F in K[[x]][y]
-# Out: the Gauss valuation of F
-    return minimum(map(valuation,F.coeffs))
+# Out: the Gauss valuation of F (-1 if input is 0)
+    tmp = minimum(map(valuation,F.coeffs))
+    if tmp == F.parent.base_ring.prec_max
+        return -1
+    end
+    return tmp
 end
 
 function PhiVal(elt, vals)
