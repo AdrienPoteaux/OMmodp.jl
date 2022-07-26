@@ -4,7 +4,7 @@ using Nemo
 using DataStructures
 
 include("test-subroutines.jl")
-include("test-newtonpolygon.jl")
+include("test-valuations.jl")
 
 @testset "OMmodp.jl" begin
     # Testing subroutines

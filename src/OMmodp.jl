@@ -6,7 +6,7 @@ using Nemo
 using DataStructures
 
 include("subroutines.jl")
-include("newtonpolygon.jl")
+include("valuations.jl")
 
 export AppRoot
 export TaylorExp
