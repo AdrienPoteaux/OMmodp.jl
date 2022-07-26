@@ -1,6 +1,7 @@
 using OMmodp
 using Test
 using Nemo
+using DataStructures
 
 include("test-subroutines.jl")
 include("test-newtonpolygon.jl")
@@ -12,4 +13,5 @@ include("test-newtonpolygon.jl")
     @test TestPhiExp()
     # Testing valuation / Newton polygon
     @test TestPhiVal()
+    @test TestPhiNewtonPolygon()
 end
