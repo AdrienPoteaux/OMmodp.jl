@@ -61,11 +61,11 @@ end
 function GaussVal(F)
 #  In: F in K[[x]][y]
 # Out: the Gauss valuation of F (-1 if input is 0)
-    tmp = minimum(map(valuation,F.coeffs))
-    if tmp == F.parent.base_ring.prec_max
-        return -1
-    end
-    return tmp
+  tmp = minimum(map(valuation,F.coeffs))
+  if tmp == F.parent.base_ring.prec_max
+    return -1
+  end
+  return tmp
 end
 
 """
@@ -80,102 +80,130 @@ Compute the valuation of elt
 function PhiVal(elt, vals)
 #  In: elt some Phi expansion of F in K[[x]][y], vals the valuation of the key polynomials
 # Out: the associated valuation (assumed positive, as we return -1 for the 0 polynomial)
-    k=length(vals)
-    last=length(elt)
-    mini=-1
-    while mini == -1
-        mini = k>1 ? PhiVal(elt[last],vals[1:k-1]) : GaussVal(elt[last])
-        last-=1
-        if last==0
-            break
-        end
+  k=length(vals)
+  last=length(elt)
+  mini=-1
+  while mini == -1
+    mini = k>1 ? PhiVal(elt[last],vals[1:k-1]) : GaussVal(elt[last])
+    last-=1
+    if last==0
+      break
     end
-    mini += vals[k]*last # This adds 0 if last==0
-    for i in 1:last
-        tmp = k>1 ? PhiVal(elt[i],vals[1:k-1]) : GaussVal(elt[i])
-        if tmp != -1
-            tmp+=vals[k]*(i-1)
-        end
-        if mini>tmp
-            mini=tmp
-        end
+  end
+  mini += vals[k]*last # This adds 0 if last==0
+  for i in 1:last
+    tmp = k>1 ? PhiVal(elt[i],vals[1:k-1]) : GaussVal(elt[i])
+    if tmp != -1
+      tmp+=vals[k]*(i-1)
     end
-    return mini
+    if mini>tmp
+      mini=tmp
+    end
+  end
+  return mini
 end
 
 """
-    PhiNewtonPolygon(exp,vals)
+    PhiNewtonPolygon(elt,vals)
 
 Generalised Newton polygon computation
 
 # arguments
-- elt a table representing some Phi-adic expansion (i.e. a table of table of ... of polynomials), as given by PhiExp
+- elt a table representing some Phi-adic eltansion (i.e. a table of table of ... of polynomials), as given by PhiExp
 - vals the (augmented) valuations of the Phi[i]
 """
-function PhiNewtonPolygon(exp,vals)
-#  In: exp a Phi expansion of some polynomials, vals the valuation of the key polynomials
+function PhiNewtonPolygon(elt,vals)
+#  In: elt a Phi eltansion of some polynomials, vals the valuation of the key polynomials
 # Out: the associated generalised Newton polygon
-    #=
-    Remark : we might want to change the implementation to get the "classical" Newton polygon
-    =#
-    valuations=[PhiVal(exp[i],vals) for i in 1:length(exp)]
-    first=1 # will be the first point of the list we need to consider
-    while (valuations[first] == -1) && (first <= length(valuations))
-      first+=1
+  #=
+  Remark : we might want to change the implementation to get the "classical" Newton polygon
+  =#
+  valuations=[PhiVal(elt[i],vals) for i in eachindex(elt)]
+  first=1 # will be the first point of the list we need to consider
+  while (valuations[first] == -1) && (first <= length(valuations))
+    first+=1
+  end
+  if first == length(valuations)+1
+    return [] # elt corresponds to some zero polynomial
+  end
+  l = first # will be leftmost point with smallest ordinate
+  v = valuations[first];# will be the valuation of the polynomial
+  for i in first+1:length(valuations)
+    if (valuations[i] != -1) && (valuations[i] < v)
+      l = i
+      v = valuations[i]
     end
-    if first == length(valuations)+1
-      return [] # exp corresponds to some zero polynomial
-    end
-    l = first # will be leftmost point with smallest ordinate
-    v = valuations[first];# will be the valuation of the polynomial
-    for i in first+1:length(valuations)
-      if (valuations[i] != -1) && (valuations[i] < v)
-        l = i
-        v = valuations[i]
+  end
+  last = length(valuations) # will be the last point of the list we need to consider
+  while (valuations[last] == -1) # cannot go infinite (we would have already returned [] as a Newton polygon)
+    last-=1
+  end
+  r = last # will be the rightmost point with smallest ordinate
+  while (valuations[r] != v)
+    r-=1
+  end
+  # Now storing the points we have to consider for the lowest convex hull
+  left_points = [[first-1,valuations[first]]] # corresponds to negative slopes
+  if first != l
+    tmp = (valuations[l]-valuations[first])//(l-first)
+    a = -numerator(tmp)
+    b = denominator(tmp)
+    c = a*(first-1) + b*valuations[first]
+    # the line from [first-1,valuations[first]] to [l-1,valuations[l]] is a*i+b*j=c
+    for i in first+1:l-1
+      if (a*(i-1)+b*valuations[i]<c) # this point can be in the lowest convex hull.
+        left_points = [left_points;[[i-1,valuations[i]]]]
       end
     end
-    last = length(valuations) # will be the last point of the list we need to consider
-    while (valuations[last] == -1) # cannot go infinite (we would have already returned [] as a Newton polygon)
-      last-=1
-    end
-    r = last # will be the rightmost point with smallest ordinate
-    while (valuations[r] != v)
-      r-=1
-    end
-    # Now storing the points we have to consider for the lowest convex hull
-    left_points = [[first-1,valuations[first]]] # corresponds to negative slopes
-    if first != l
-      tmp = (valuations[l]-valuations[first])//(l-first)
-      a = -numerator(tmp)
-      b = denominator(tmp)
-      c = a*(first-1) + b*valuations[first]
-      # the line from [first-1,valuations[first]] to [l-1,valuations[l]] is a*i+b*j=c
-      for i in first+1:l-1
-        if (a*(i-1)+b*valuations[i]<c) # this point can be in the lowest convex hull.
-          left_points = [left_points;[[i-1,valuations[i]]]]
-        end
+    left_points = [left_points;[[l-1,valuations[l]]]]
+  end
+  points = LowerConvexHull(left_points)
+  if l!=r
+    points = [points;[[r-1,valuations[r]]]]
+  end
+  if r != last
+    right_points=[[r-1,valuations[r]]]
+    tmp = (valuations[r]-valuations[last])//(r-last)
+    a = -numerator(tmp)
+    b = denominator(tmp)
+    c = a*(r-1) + b*valuations[r]
+    # the line from [r-1,valuations[r]] to [last-1,valuations[last]] is a*i+b*j=c
+    for i in r+1:last-1
+      if (a*(i-1)+b*valuations[i]<c) # this point can be in the lowest convex hull.
+        right_points=[right_points;[[i-1,valuations[i]]]]
       end
-      left_points = [left_points;[[l-1,valuations[l]]]]
     end
-    points = LowerConvexHull(left_points)
-    if l!=r
-      points = [points;[[r-1,valuations[r]]]]
-    end
-    if r != last
-      right_points=[[r-1,valuations[r]]]
-      tmp = (valuations[r]-valuations[last])//(r-last)
-      a = -numerator(tmp)
-      b = denominator(tmp)
-      c = a*(r-1) + b*valuations[r]
-      # the line from [r-1,valuations[r]] to [last-1,valuations[last]] is a*i+b*j=c
-      for i in r+1:last-1
-        if (a*(i-1)+b*valuations[i]<c) # this point can be in the lowest convex hull.
-          right_points=[right_points;[[i-1,valuations[i]]]]
-        end
+    right_points=[right_points;[[last-1,valuations[last]]]]
+    tmp = LowerConvexHull(right_points)
+    points=[points;tmp[2:length(tmp)]]
+  end
+  return points
+end
+
+# More an intern function than anything else
+function AllCoeffGivenV(elt, vals, v)
+#  In: elt a Phi eltansion of some polynomials, vals the valuation of the key polynomials and v some targeted valuation
+# Out: all coefficients having valuation v, taking into account all phi
+  k = length(vals)
+  res=[]
+  if k>0
+    for i in eachindex(elt)
+      tmp = AllCoeffGivenV(elt[i], vals[1:k-1], v-(i-1)*vals[k])
+      for j in eachindex(tmp)
+        tmp[j] = [tmp[j] ; i-1]
       end
-      right_points=[right_points;[[last-1,valuations[last]]]]
-      tmp = LowerConvexHull(right_points)
-      points=[points;tmp[2:length(tmp)]]
+      if length(tmp)>0#necessaire ?
+        res = [res ; tmp]
+      end
     end
-    return points
+    return res
+  end
+  res=[]
+  if denominator(v)!=1
+    return res
+  end
+  for i in 1:length(elt)
+    res=[res;[[coeff(coeff(elt,i-1),numerator(v)),numerator(v),i-1]]]
+  end
+  return res
 end

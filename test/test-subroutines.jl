@@ -33,7 +33,7 @@ function TestTaylorExp()
     F = (53*x^12+102*x^9+65*x^6)*y^4+(160*x^9+146*x^6)*y^3+(70*x^6+204*x^3)*y^2+(109*x^3+32*x^2+5*x)*y+3*x+11
     tmp=TaylorExp(F,phi)
     somme=0
-    for i in 1:length(tmp)
+    for i in eachindex(tmp)
         somme=somme+phi^(i-1)*tmp[i]
     end
     
@@ -46,7 +46,7 @@ function TestTaylorExp()
 
     tmp=TaylorExp(F,phi)
     somme=0
-    for i in 1:length(tmp)
+    for i in eachindex(tmp)
         somme=somme+phi^(i-1)*tmp[i]
     end
     
@@ -64,14 +64,14 @@ function PhiEval(l,Phi)
     L=Phi[1].parent
     if k>1
         res=L(0)
-        for i in 1:length(l)
+        for i in eachindex(l)
             res+=PhiEval(l[i],Phi[1:k-1])*Phi[k]^(i-1)
         end
         return res
     end
     # k is 1
     res=L(0)
-    for i in 1:length(l)
+    for i in eachindex(l)
         res+=l[i]*Phi[k]^(i-1)
     end
     return res

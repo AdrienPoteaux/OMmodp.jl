@@ -14,4 +14,5 @@ include("test-valuations.jl")
     # Testing valuation / Newton polygon
     @test TestPhiVal()
     @test TestPhiNewtonPolygon()
+    @test TestAllCoeffGivenV()# to remove in the end ?
 end
