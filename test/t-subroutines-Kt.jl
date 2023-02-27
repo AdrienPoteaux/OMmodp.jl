@@ -59,7 +59,7 @@ function TestTaylorExp()
     return true
 end
 
-function PhiEval(l::Vector,Phi::Vector{Generic.Poly})
+function PhiEval(l::Vector,Phi::Vector{Generic.Poly{T}}) where {T}
 #  In: a list from PhiExp(F,phi)
 # Out: normally, F
     k=length(Phi)
