@@ -1,4 +1,4 @@
-module OMmodp
+module OMFacto
 
 # Write your package code here.
 

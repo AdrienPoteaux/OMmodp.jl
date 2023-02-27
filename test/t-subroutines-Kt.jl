@@ -1,7 +1,9 @@
-# Idealement j'aimerais que cette fonction soit definie ici uniquement, mais si je fais ca, AppRoot ne la connait pas... du coup pour le moment je l'ai egalement definie dans subroutines.jl...
-function ConstInv(A::GFPRelSeriesRing, n::Int64)
-    return A.base_ring(1)//n
-end
+Main.OMFacto.eval(:(
+    function ConstInv(A::GFPRelSeriesRing, n::Int64)
+        return A.base_ring(1)//n
+    end
+    )
+)
 
 function TestAppRoot()
     A, x = PowerSeriesRing(GF(211), 33, "x")

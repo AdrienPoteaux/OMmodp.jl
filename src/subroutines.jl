@@ -15,13 +15,6 @@ function truncate(F::Generic.Poly{T},n::Int) where {T}
     return K((F.coeffs)[1:n])
 end
 
-# Probleme : cette fonction, j'ai pas envie qu'elle soit definie ici... mais si definie ailleurs, AppRoot la considere comme non definie.
-# FLORENT ?
-function ConstInv(A::GFPRelSeriesRing, n::Int64)
-    return A.base_ring(1)//n
-end
-
-
 """
     AppRoot(F::Generic.Poly{T},N::Int) where {T}
 

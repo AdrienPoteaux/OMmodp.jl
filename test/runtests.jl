@@ -1,10 +1,10 @@
-#using OMmodp # si je comprends bien il ne faut plus l'import car il est deja lu dans le main car def ici ?
+using Main.OMFacto
 using Test
 using Nemo
 using DataStructures
 
 include("t-subroutines-Kt.jl")
-include("t-valuations-Fpt.jl")
+include("t-valuations-Kt.jl")
 
 @testset "OMmodp.jl" begin
     # Testing subroutines
