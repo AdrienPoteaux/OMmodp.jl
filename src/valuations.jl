@@ -152,7 +152,7 @@ function PhiNewtonPolygon(elt::Vector, vals::Vector)
     r-=1
   end
   # Now storing the points we have to consider for the lowest convex hull
-  left_points = [[first-1,valuations[first]]] # corresponds to negative slopes
+  left_points = [[first-1,valuations[first]]] # will contain the negative slopes
   if first != l
     tmp = (valuations[l]-valuations[first])//(l-first)
     a = -numerator(tmp)
@@ -160,12 +160,13 @@ function PhiNewtonPolygon(elt::Vector, vals::Vector)
     c = a*(first-1) + b*valuations[first]
     # the line from [first-1,valuations[first]] to [l-1,valuations[l]] is a*i+b*j=c
     for i in first+1:l-1
-      if (a*(i-1)+b*valuations[i]<c) # this point can be in the lowest convex hull.
+      if (valuations[i] != -1) && (a*(i-1)+b*valuations[i]<c) # this point can be in the lowest convex hull (-1 means a 0 coefficient, so is not considered).
         left_points = [left_points;[[i-1,valuations[i]]]]
       end
     end
     left_points = [left_points;[[l-1,valuations[l]]]]
   end
+  println("Left part",left_points)
   points = LowerConvexHull(left_points)
   if l!=r
     points = [points;[[r-1,valuations[r]]]]
@@ -178,11 +179,12 @@ function PhiNewtonPolygon(elt::Vector, vals::Vector)
     c = a*(r-1) + b*valuations[r]
     # the line from [r-1,valuations[r]] to [last-1,valuations[last]] is a*i+b*j=c
     for i in r+1:last-1
-      if (a*(i-1)+b*valuations[i]<c) # this point can be in the lowest convex hull.
+      if (valuations[i] != -1) && (a*(i-1)+b*valuations[i]<c) # this point can be in the lowest convex hull.
         right_points=[right_points;[[i-1,valuations[i]]]]
       end
     end
     right_points=[right_points;[[last-1,valuations[last]]]]
+    println("Right part",right_points)
     tmp = LowerConvexHull(right_points)
     points=[points;tmp[2:length(tmp)]]
   end
