@@ -49,3 +49,4 @@ function TestAllCoeffGivenVPadic()
     vals=[3//2]
     elt=PhiExp(F,Phi)
     return AllCoeffGivenV(elt[1],vals,33//2) == [[2,15,0,1]]
+end
