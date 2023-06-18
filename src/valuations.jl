@@ -104,9 +104,9 @@ function PhiVal(elt::Vector, vals::Vector)
     tmp = k>1 ? PhiVal(elt[i],vals[1:k-1]) : GaussVal(elt[i])
     if tmp != -1
       tmp+=vals[k]*(i-1)
-    end
-    if mini>tmp
-      mini=tmp
+      if mini>tmp
+        mini=tmp
+      end
     end
   end
   return mini
@@ -193,10 +193,10 @@ end
 
 ### ICI ICI ICI
 # More an intern function than anything else
-# GENERIQUE : il a pas l'air d'aimer le elt::Vector (je l'ai vire du coup)
 function AllCoeffGivenV(elt, vals::Vector, v)
 #  In: elt a Phi expansion of some polynomial, vals the valuation of the key polynomials and v some targeted valuation
-# Out: all coefficients having valuation v, taking into account all phi
+# Out: all "coefficients" having valuation v, taking into account all phi.
+# One "coefficient" is a tuple [c,d_0,d_1,...,d_k] such that c*x^{d_0}*phi_1^{d_1}*...*phi_k^{d_k} is the "element" of F with targetted valuation.
   k = length(vals)
   res=[]
   if k>0
@@ -212,54 +212,25 @@ function AllCoeffGivenV(elt, vals::Vector, v)
     return res
   end
   # k == 0
-  res=[]
   if denominator(v)!=1
     return res
   end
   for i in 1:length(elt)
-    res=[res;[[coeff(coeff(elt,i-1),numerator(v)),numerator(v),i-1]]] # NON GENERIQUE ?
+    tmp=BivCoeff(elt,i-1,numerator(v)) # IMPORTANT : BivCoeff is supposed to be defined by the user for genericity purpose.
+    if tmp != 0
+      res=[res;[[tmp,numerator(v),i-1]]] # ICI : je ne sais pas si on veut mettre le i-1 ou pas (si length(elt) vaut 1, c'est toujours 0, )
+    end
   end
   return res
 end
 
 #=
-On the formulas to compute the residual polynomial
+Description in our 2022 paper with Barcelona : -> on va essayer de suivre Nart / Oliveira plutôt.
+Given mu a valuation, phi a key polynomial of minimum degree
 
-We have R_0 = (F/x^v_0(F))(0,z)
+We take u a unit, i.e. an element of K[x] of degree < deg(phi) with valuation e*mu(phi).
 
-Issac version : R_k(F) = \sum_i z_{k-1}^\tau_{k,i}*R_{k-1}(a_i*phi_k^i)(z_{k-1}) * z^{(i-i_k(F))/q_k}
-
-\tau_{k,i} = (i_{k-1}(a_i)+\beta_{k-1}*v_k(a_i*phi_k^i))/q_{k-1}
-
-One example :
-
-P = y^2 - 2*x
-
-On veut (T^2+T+1)^2 = T^4 + 2*T^3 + 3*T^2 + 2*T +1 comme polynome caracteristique
-
-F = P^4 + 2*x*y*P^3 + 6*x^3*P^2 + 4*x^4*y*P + 4*x^6
-
-Puiseux fait x=2*x^2, y=x*(y+2) ; donc P devient 4*y+...
-
-Du coup le polynome de facette devient 2^8*y^4 + 2^9*y^3 + 3*2^8*y^2 + 2^9*y + 2^8, ce qu'on veut.
-
-polynome residuel (formules Montes) : beta_1 = 1 ; v_2(x)=2, v_2(y)=1, v_2(P)=2
-a_0 = 4*x^6   -> R_1(a_0)=4 ; \tau_{1,0} = (0+1*v_2(4*x^6))/2 = 6     --> 2^8
-a_1 = 4*x^4*y -> R_1(a_1)=4 ; \tau_{1,1} = (1+1*v_2(4*x^4*y*P))/2 = 6 --> 2^8*z
-a_2 = 6*x^3   -> R_1(a_2)=6 ; \tau_{1,2} = (0+1*v_2(6*x^3*P^2)) = 5   --> 3*2^6*z^2
-a_3 = 2*x*y   -> R_1(a_3)=2 ; \tau_{1,3} = (1+1*v_2(2*x*y*P^3))/2 = 5 --> 2^6*z^3
-a_4 = 1       -> R_1(a_4)=1 ; \tau_{1,4} = (0+v_2(P^4))/2 = 4         --> 2^4*z^4
-
-Je trouve donc 2^4*(z^4+4*z^3+12*z^2+16*z+16)=2^4*(z^2+2*z+4)^2
-
-R_2(2*z) est egal au polynome caracteristique !
-
-Quid avec des valuations "rationnelles" ?
-To deal with:
-  1) on a plus vraiment de m et q, donc de beta.
-  2) les valeurs des valuations sont differentes.
-
-
+Then we correct the coefficients by multiplying by u^{j-d} the j-th coefficient (and dividing by the leading coefficient if need be).
 =#
 """
     PhiResidualPol(elt::Vector, Delta, vals::Vector, Lambda::Vector)
@@ -268,6 +239,9 @@ Compute the residual polynomial of elt according to the edge Delta.
 
 vals provide the list of augmented valuations
 Lambda the list of "correcting terms"
+
+IMPORTANT : we assume that a function BivCoeff (T, Int64, Int64) exists (the user must define it)
+(it is used in the internal function AllCoeffGivenV)
 """
 function PhiResidualPol(elt::Vector, Delta, vals::Vector, Lambda::Vector)
   slope = (Delta[2][2]-Delta[1][2])/(Delta[2][1]-Delta[1][1])

@@ -4,8 +4,10 @@ authors = ["Adrien Poteaux <adrien.poteaux@univ-lille.fr> and contributors"]
 version = "0.1.0"
 
 [deps]
+AbstractAlgebra = "c3fe647b-3220-5bb0-a1ea-a7954cac585d"
 DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
 Nemo = "2edaba10-b0f1-5616-af89-8c11ac63239a"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 Polynomials = "f27b6e38-b328-58d1-80ce-0feddd5e7a45"
 RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 

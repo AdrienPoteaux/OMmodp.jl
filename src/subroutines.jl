@@ -25,7 +25,7 @@ We assume that N divides deg(F)
 IMPORTANT : we assume that a function ConstInv (T, Int64) exists (the user must define it)
 """
 # About ConstInv :
-# ConstInv(K[[t]],n) is K(1)//n, i.e. A.base_ring(1)//n
+# ConstInv(K[[t]],n) is K(1)//n, i.e. base_ring(A)(1)//n
 # ConstInv(Qp,n) is either Qp(1//n)=Qp(1)//n or Fp(1//n)=Fp(1)//n ; to be investigated
 function AppRoot(F::Generic.Poly{T},N::Int) where {T}
     #  In: F in A[x] of degree d, N dividing d
@@ -63,11 +63,11 @@ Computes the Taylor expansion of F according to phi (see e.g. Modern Computer Al
 function TaylorExp(F::Generic.Poly{T}, phi::Generic.Poly{T}) where {T}
     #  In: F, phi in A[x]
     # Out: [a_0,...,a_s] s.t. F=a_0+a_1*phi+...+a_s*phi^s
-    return _TaylorExp(F,phi)
+    return _TaylorExp(F,phi,F.length-1)
 end
 
-function _TaylorExp(F::Generic.Poly{T}, phi::Generic.Poly{T}) where {T}
-    d=F.length-1
+function _TaylorExp(F::Generic.Poly{T}, phi::Generic.Poly{T}, d::Int) where {T}
+    # providing the degree is necessary for recursive reminders calls (that can have a smaller degree)
     m=phi.length-1
     k=div(d,m)
     if k<=0
@@ -76,7 +76,7 @@ function _TaylorExp(F::Generic.Poly{T}, phi::Generic.Poly{T}) where {T}
     k=div(k+1,2) # ceil(k/2)
     tmp=phi^k
     q,r=divrem(F,tmp)
-    return [_TaylorExp(r,phi);_TaylorExp(q,phi)]
+    return [_TaylorExp(r,phi,m*k-1);_TaylorExp(q,phi,d-m*k)]
 end
 
 """

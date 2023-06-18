@@ -1,8 +1,18 @@
-function ConstInv(A::Generic.RelSeries, n::Int64)
-    return A.base_ring(1)//n
-end
+Main.OMFacto.eval(:(
+    function ConstInv(A::Generic.RelSeries, n::Int64)
+        return base_ring(A)(1)//n
+    end
+    )
+)
 
-function TestPhiVal()
+Main.OMFacto.eval(:(
+    function BivCoeff(elt::Generic.Poly{fpRelPowerSeriesRingElem}, i::Int64, n::Int64) # ICI GENERIQUE j'aimerais preciser le RingElem en K[[t]]; Comment faire ?
+        return coeff(coeff(elt,i),n)
+    end
+    )
+)
+
+function TestPhiValKt()
     A, t = PowerSeriesRing(GF(211), 33, "t")
     L, x = PolynomialRing(A,"x")
 
@@ -13,7 +23,7 @@ function TestPhiVal()
     return PhiVal(elt,vals) == 13
 end
 
-function TestPhiNewtonPolygon()
+function TestPhiNewtonPolygonKt()
     A, t = PowerSeriesRing(GF(211), 33, "t")
     L ,x = PolynomialRing(A,"x")
 
@@ -24,7 +34,7 @@ function TestPhiNewtonPolygon()
     return PhiNewtonPolygon(elt,vals)==[[0,15],[4,0]]
 end
 
-function TestAllCoeffGivenV()
+function TestAllCoeffGivenVKt()
     A, t = PowerSeriesRing(GF(211), 33, "t")
     L, x = PolynomialRing(A,"x")
 

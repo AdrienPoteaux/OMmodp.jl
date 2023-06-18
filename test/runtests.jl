@@ -1,18 +1,23 @@
-using Main.OMFacto
+using OMFacto
 using Test
 using Nemo
 using DataStructures
 
 include("t-subroutines-Kt.jl")
 include("t-valuations-Kt.jl")
+include("t-valuations-padic.jl")
 
 @testset "OMmodp.jl" begin
-    # Testing subroutines
-    @test TestTaylorExp()
-    @test TestAppRoot()
-    @test TestPhiExp()
-    # Testing valuation / Newton polygon
-    @test TestPhiVal()
-    @test TestPhiNewtonPolygon()
-    @test TestAllCoeffGivenV()# to remove in the end ?
+    # Testing subroutines for GF(211)[[t]][x]
+    @test TestTaylorExpKt()
+    @test TestAppRootKt()
+    @test TestPhiExpKt()
+    # Testing valuation / Newton polygon for GF(211)[[t]][x]
+    @test TestPhiValKt()
+    @test TestPhiNewtonPolygonKt()
+    @test TestAllCoeffGivenVKt()# to remove in the end ?
+    # Testing valuation / Newton polygon for Qp(3)[x]
+    @test TestPhiValPadic()
+    @test TestPhiNewtonPolygonPadic()
+    @test TestAllCoeffGivenVPadic()# to remove in the end ?
 end

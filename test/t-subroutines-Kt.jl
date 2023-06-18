@@ -1,11 +1,11 @@
 Main.OMFacto.eval(:(
     function ConstInv(A::GFPRelSeriesRing, n::Int64)
-        return A.base_ring(1)//n
+        return base_ring(A)(1)//n
     end
     )
 )
 
-function TestAppRoot()
+function TestAppRootKt()
     A, x = PowerSeriesRing(GF(211), 33, "x")
     L, y = PolynomialRing(A,"y")
     F=y^4+x^3*y^3+209*x^3*y^2+x^6
@@ -30,7 +30,7 @@ function TestAppRoot()
     return true
 end
 
-function TestTaylorExp()
+function TestTaylorExpKt()
     A, x = PowerSeriesRing(GF(211), 33, "x")
     L,y=PolynomialRing(A,"y")
     phi = y^2+(100*x^3+x^2+4)*y+2*x^2+105*x+98
@@ -81,7 +81,7 @@ function PhiEval(l::Vector,Phi::Vector{Generic.Poly{T}}) where {T}
     return res
 end
 
-function TestPhiExp()
+function TestPhiExpKt()
     A, x = PowerSeriesRing(GF(211), 33, "x")
     L, y = PolynomialRing(A,"y")
     F=y^8+(x^10+203*x^2)*y^7+(28*x^4+201*x^3)*y^6+(143*x^6+60*x^5)*y^5+(209*x^9+130*x^8+61*x^7+33*x^6)*y^4+(8*x^11+35*x^10+37*x^9+79*x^8)*y^3+(190*x^12+128*x^11+198*x^10+171*x^9)*y^2+(7*x^12+80*x^11)*y+16*x^12
