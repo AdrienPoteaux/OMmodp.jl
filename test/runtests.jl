@@ -6,6 +6,7 @@ using DataStructures
 include("t-subroutines-Kt.jl")
 include("t-valuations-Kt.jl")
 include("t-valuations-padic.jl")
+include("t-valuations-Kt1t2.jl")# in progress
 
 @testset "OMmodp.jl" begin
     # Testing subroutines for GF(211)[[t]][x]
