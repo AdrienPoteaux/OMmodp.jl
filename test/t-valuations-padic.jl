@@ -1,22 +1,11 @@
 ## Je prends l'exemple des slides pour rester simple
 
-Main.OMFacto.eval(:(
-    function ConstInv(A::GFPRelSeriesRing, n::Int64)
-        return base_ring(A)(1)//n
-    end
-    )
-)
-
-
-Main.OMFacto.eval(:(
-    function BivCoeff(elt::Generic.Poly{padic}, i::Int64, n::Int64)
-        a=coeff(elt,i)
-        aq=lift(QQ,a)
-        p=a.parent.p
-        return floor(mod(aq,p^(n+1))//p^n)
-    end
-    )
-)
+function Main.OMFacto.:BivCoeff(elt::Generic.Poly{padic}, i::Int64, n::Int64)
+    a=coeff(elt,i)
+    aq=lift(QQ,a)
+    p=a.parent.p
+    return floor(mod(aq,p^(n+1))//p^n)
+end
 
 function TestPhiValPadic()
     A    = PadicField(3, 50)

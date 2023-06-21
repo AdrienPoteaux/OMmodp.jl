@@ -1,16 +1,6 @@
-Main.OMFacto.eval(:(
-    function ConstInv(A::Generic.RelSeries, n::Int64)
-        return base_ring(A)(1)//n
-    end
-    )
-)
-
-Main.OMFacto.eval(:(
-    function BivCoeff(elt::Generic.Poly{fpRelPowerSeriesRingElem}, i::Int64, n::Int64) # ICI GENERIQUE j'aimerais preciser le RingElem en K[[t]]; Comment faire ?
-        return coeff(coeff(elt,i),n)
-    end
-    )
-)
+function Main.OMFacto.:BivCoeff(elt::Generic.Poly{fpRelPowerSeriesRingElem}, i::Int64, n::Int64) # ICI GENERIQUE j'aimerais preciser le RingElem en K[[t]]; Comment faire ?
+    return coeff(coeff(elt,i),n)
+end
 
 function TestPhiValKt()
     A, t = PowerSeriesRing(GF(211), 33, "t")

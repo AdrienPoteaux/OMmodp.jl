@@ -15,18 +15,24 @@ function truncate(F::Generic.Poly{T},n::Int) where {T}
     return K((F.coeffs)[1:n])
 end
 
+## IMPORTANT : we assume that a function ConstInv (T, Int64) exists (the user must define it)
+# About ConstInv :
+# ConstInv(K[[t]],n) is K(1)//n, i.e. base_ring(A)(1)//n
+# ConstInv(Qp,n) is either Qp(1//n)=Qp(1)//n or Fp(1//n)=Fp(1)//n ; to be investigated
+# Looks like ConstInv always work the same in my examples, so I add it here for the moment ; this might have to be done in "base ring" files later on.
+
+function ConstInv(n::Int64)
+    return base_ring(A)(1)//n
+end
+
+
 """
     AppRoot(F::Generic.Poly{T},N::Int) where {T}
 
 Computes the N-th approximate root of F
 
 We assume that N divides deg(F)
-
-IMPORTANT : we assume that a function ConstInv (T, Int64) exists (the user must define it)
 """
-# About ConstInv :
-# ConstInv(K[[t]],n) is K(1)//n, i.e. base_ring(A)(1)//n
-# ConstInv(Qp,n) is either Qp(1//n)=Qp(1)//n or Fp(1//n)=Fp(1)//n ; to be investigated
 function AppRoot(F::Generic.Poly{T},N::Int) where {T}
     #  In: F in A[x] of degree d, N dividing d
     # Out: the N-th approximate root of F

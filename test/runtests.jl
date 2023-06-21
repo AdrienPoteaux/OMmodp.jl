@@ -6,7 +6,7 @@ using DataStructures
 include("t-subroutines-Kt.jl")
 include("t-valuations-Kt.jl")
 include("t-valuations-padic.jl")
-include("t-valuations-Kt1t2.jl")# in progress
+include("t-valuations-Kt1t2.jl")
 
 @testset "OMmodp.jl" begin
     # Testing subroutines for GF(211)[[t]][x]
@@ -21,4 +21,8 @@ include("t-valuations-Kt1t2.jl")# in progress
     @test TestPhiValPadic()
     @test TestPhiNewtonPolygonPadic()
     @test TestAllCoeffGivenVPadic()# to remove in the end ?
+    # Testing valuation / Newton polygon for GF(149)[[t1,t2]][x]
+    @test TestPhiValKt1t2()
+    @test TestPhiNewtonPolygonKt1t2()
+    @test TestAllCoeffGivenVKt1t2()# to remove in the end ?
 end

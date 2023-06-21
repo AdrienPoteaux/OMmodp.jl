@@ -70,7 +70,14 @@ function GaussVal(F::Generic.Poly)
   if F == 0
     return -1
   end
-  return minimum(map(valuation,F.coeffs))
+  d=degree(F)
+  nzcoeffs=[] # had some examples where F.coeffs was returning a huge list of 0 coefficients, so proceeding that way
+  for i in 0:d
+    if coeff(F,i) != 0
+      nzcoeffs=[nzcoeffs;coeff(F,i)]
+    end
+  end
+  return minimum(map(valuation,nzcoeffs))
 end
 
 """
@@ -166,7 +173,6 @@ function PhiNewtonPolygon(elt::Vector, vals::Vector)
     end
     left_points = [left_points;[[l-1,valuations[l]]]]
   end
-  println("Left part",left_points)
   points = LowerConvexHull(left_points)
   if l!=r
     points = [points;[[r-1,valuations[r]]]]
@@ -184,12 +190,16 @@ function PhiNewtonPolygon(elt::Vector, vals::Vector)
       end
     end
     right_points=[right_points;[[last-1,valuations[last]]]]
-    println("Right part",right_points)
     tmp = LowerConvexHull(right_points)
     points=[points;tmp[2:length(tmp)]]
   end
   return points
 end
+
+function BivCoeff(elt,i,n)
+  error("BivCoeff must be defined for our base ring")
+end
+
 
 ### ICI ICI ICI
 # More an intern function than anything else
