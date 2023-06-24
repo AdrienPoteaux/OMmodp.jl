@@ -4,8 +4,8 @@ function Main.OMFacto.:>(v1::nf_elem, v2::nf_elem)
     cv = representation_matrix(v)[1,:]
     if cv[1]>0 && cv[2]>0 return true end
     if cv[1]<0 && cv[2]<0 return false end
-    if cv[1]<0 cv = -cv end
-    return cv[1]^2-2*cv[2]^2>0
+    if cv[1]<0 return cv[1]^2<2*cv[2]^2 end
+    return cv[1]^2>2*cv[2]^2
 end
 
 function Main.OMFacto.:<(v1::nf_elem,v2::nf_elem) return v2 > v1 end

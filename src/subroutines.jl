@@ -49,7 +49,7 @@ function AppRoot(F::Generic.Poly{T},N::Int) where {T}
     Lz,z=L["zA"] # using PolynomialRing here gets me a "julia undefvarerror: PolynomialRing not defined"
     G=z^N-reciprocal(F)
     psi=L(1)
-    inv=ConstInv(A,N) ## La aussi, je pense qu'un 1//K(N) doit le faire en mieux SOUCI GENERIQUE
+    inv=ConstInv(A,N)
     k=1
     while k<m+1 # Newton method (diff(G)=N*z^(N-1))
         k*=2
