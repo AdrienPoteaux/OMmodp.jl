@@ -21,7 +21,7 @@ end
 # ConstInv(Qp,n) is either Qp(1//n)=Qp(1)//n or Fp(1//n)=Fp(1)//n ; to be investigated
 # Looks like ConstInv always work the same in my examples, so I add it here for the moment ; this might have to be done in "base ring" files later on.
 
-function ConstInv(n::Int64)
+function ConstInv(A,n::Int64)
     return base_ring(A)(1)//n
 end
 
