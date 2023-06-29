@@ -1,10 +1,9 @@
 ## Je prends l'exemple des slides pour rester simple
 
-function Main.OMFacto.:BivCoeff(elt::Generic.Poly{padic}, i::Int64, n::Int64)
-    a=coeff(elt,i)
-    aq=lift(QQ,a)
-    p=a.parent.p
-    return floor(mod(aq,p^(n+1))//p^n)
+function Main.OMFacto.:CoeffAndExp(elt::padic, n::Int64)
+    aq=lift(QQ,elt)
+    p=elt.parent.p
+    return [floor(mod(aq,p^(n+1))//p^n),[n]]
 end
 
 function TestPhiValPadic()
@@ -37,5 +36,5 @@ function TestAllCoeffGivenVPadic()
     Phi = [x,x^2-27]
     vals=[3//2]
     elt=PhiExp(F,Phi)
-    return AllCoeffGivenV(elt[1],vals,33//2) == [[2,15,0,1]]
+    return AllCoeffGivenV(elt[1],vals,33//2) == [[2,[15],1]]
 end

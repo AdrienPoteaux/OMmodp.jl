@@ -25,4 +25,5 @@ include("t-valuations-Kt1t2.jl")
     @test TestPhiValKt1t2()
     @test TestPhiNewtonPolygonKt1t2()
     @test TestAllCoeffGivenVKt1t2()# to remove in the end ?
+    @test TestPhiResidualPolKt1t2()
 end

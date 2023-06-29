@@ -58,7 +58,7 @@ function LowerConvexHull(L) # based on Graham algorithm
   return res
 end
 
-"""
+#= """
     GaussVal(F::Generic.Poly)
 
   Compute the Gauss valuation of F
@@ -79,17 +79,19 @@ function GaussVal(F::Generic.Poly)
   end
   return minimum(map(valuation,nzcoeffs))
 end
+ =#
 
-"""
-    PhiVal(elt::Vector, vals::Vector)
+ """
+    PhiVal(elt, vals::Vector)
 
 Compute the valuation of elt
 
 # arguments
-- elt a table representing some Phi-adic expansion (i.e. a table of table of ... of polynomials), as given by PhiExp
+- elt either a table representing some Phi-adic expansion (i.e. a table of table of ... of elements of A), as given by PhiExp
+      either an element of A (but then vals must be the empty list)
 - vals the (augmented) valuations of the Phi[i]
 """
-function PhiVal(elt::Vector, vals::Vector)
+function PhiVal(elt, vals::Vector)
 #  In: elt some Phi expansion of F in A[x], vals the valuation of the key polynomials
 # Out: the associated valuation (assumed positive, as we return -1 for the 0 polynomial)
   k=length(vals)
@@ -100,7 +102,7 @@ function PhiVal(elt::Vector, vals::Vector)
   last=length(elt)
   mini=-1
   while mini == -1
-    mini = k>1 ? PhiVal(elt[last],vals[1:k-1]) : GaussVal(elt[last])
+    mini = PhiVal(elt[last],vals[1:k-1])
     last-=1
     if last==0
       break
@@ -108,7 +110,7 @@ function PhiVal(elt::Vector, vals::Vector)
   end
   mini += vals[k]*last # This adds 0 if last==0
   for i in 1:last
-    tmp = k>1 ? PhiVal(elt[i],vals[1:k-1]) : GaussVal(elt[i])
+    tmp = PhiVal(elt[i],vals[1:k-1])
     if tmp != -1
       tmp+=vals[k]*(i-1)
       if mini>tmp
@@ -131,9 +133,7 @@ Generalised Newton polygon computation ("Nart" version: valuation of phi_k is no
 function PhiNewtonPolygon(elt::Vector, vals::Vector)
 #  In: elt a Phi expansion of some polynomials, vals the valuation of the key polynomials
 # Out: the associated generalised Newton polygon
-  #=
-  Remark : we might want to change the implementation to get the "classical" Newton polygon
-  =#
+  # Remark : we might want to change the implementation to get the "classical" Newton polygon
   valuations=[PhiVal(elt[i],vals) for i in eachindex(elt)] # Nart version for valuations
   first=1 # will be the first point of the list we need to consider
   while (valuations[first] == -1) && (first <= length(valuations))
@@ -196,17 +196,17 @@ function PhiNewtonPolygon(elt::Vector, vals::Vector)
   return points
 end
 
-function BivCoeff(elt,i,n)
-  error("BivCoeff must be defined for our base ring")
+function CoeffAndExp(elt,n)
+  error("CoeffAndExp must be defined for our base ring.")
 end
 
-
-### ICI ICI ICI
 # More an intern function than anything else
 function AllCoeffGivenV(elt, vals::Vector, v)
-#  In: elt a Phi expansion of some polynomial, vals the valuation of the key polynomials and v some targeted valuation
+#  In: elt a Phi expansion of some polynomial (either a list of list of ... elements of A, either an element of A)
+#      vals the valuation of the key polynomials and v some targeted valuation
 # Out: all "coefficients" having valuation v, taking into account all phi.
-# One "coefficient" is a tuple [c,d_0,d_1,...,d_k] such that c*x^{d_0}*phi_1^{d_1}*...*phi_k^{d_k} is the "element" of F with targetted valuation.
+# One "coefficient" is a tuple [c,[d_{-1,1},...,d_{-1,k}],d_0,...,d_i] such that
+# c*pi_{-1,1}^{d_{-1,1}}*...*pi_{-1,k}^{d_{-1,k}}*phi_1^{d_1}*...*phi_i^{d_i} is the "element" of F with targeted valuation.
   k = length(vals)
   res=[]
   if k>0
@@ -215,23 +215,25 @@ function AllCoeffGivenV(elt, vals::Vector, v)
       for j in eachindex(tmp)
         tmp[j] = [tmp[j] ; i-1]
       end
-      if length(tmp)>0#necessaire ?
+      if length(tmp)>0 # necessaire ?
         res = [res ; tmp]
       end
     end
     return res
   end
-  # k == 0
-  if denominator(v)!=1
-    return res
+  # k == 0 ; we have an element of A
+  if denominator(v)!=1 # no element of A has rational valuation
+    return []
   end
-  for i in 1:length(elt)
-    tmp=BivCoeff(elt,i-1,numerator(v)) # IMPORTANT : BivCoeff is supposed to be defined by the user for genericity purpose.
-    if tmp != 0
-      res=[res;[[tmp,numerator(v),i-1]]] # ICI : je ne sais pas si on veut mettre le i-1 ou pas (si length(elt) vaut 1, c'est toujours 0, )
-    end
+  tmp=CoeffAndExp(elt,numerator(v)) # outputs the coefficients and a decomposition of numerator(v) in the fg group \Gamma_{-1} (as a list).
+  if tmp[1] != 0
+    res=[res;[tmp]]
   end
   return res
+end
+
+function ValueGroup(A)
+  error("ValueGroup must be defined for our base ring. It is suppose to provide generators of the value group")
 end
 
 #=
@@ -243,24 +245,34 @@ We take u a unit, i.e. an element of K[x] of degree < deg(phi) with valuation e*
 Then we correct the coefficients by multiplying by u^{j-d} the j-th coefficient (and dividing by the leading coefficient if need be).
 =#
 """
-    PhiResidualPol(elt::Vector, Delta, vals::Vector, Lambda::Vector)
+    PhiResidualPol(elt::Vector, Delta::Vector, vals::Vector, Lambda::Vector, e::Int)
 
 Compute the residual polynomial of elt according to the edge Delta.
 
 vals provide the list of augmented valuations
-Lambda the list of "correcting terms"
+Lambda the list of "correcting terms" : [[R(pi_{-1,1}), ... , R_(pi_{-1,k})],R(phi_0),...,R(phi_{i-1})]
+e the ramification index of the slope.
+ResField : the base field of the residual polynomial
 
-IMPORTANT : we assume that a function BivCoeff (T, Int64, Int64) exists (the user must define it)
+IMPORTANT : we assume that a function CoeffAndExp (T, n) exists (the user must define it)
 (it is used in the internal function AllCoeffGivenV)
 """
-function PhiResidualPol(elt::Vector, Delta, vals::Vector, Lambda::Vector)
-  slope = (Delta[2][2]-Delta[1][2])/(Delta[2][1]-Delta[1][1])
-  m=-numerator(slope)
-  q=denominator(slope)
-
-  for i in Delta[1][1]:q:Delta[2][1]
-    j = numerator((i-Delta[1][1])//q) # q divides i-Delta[1][1]
-    tmp = AllCoeffGivenV(elt[i],vals,Delta[1][2]-(j*m))
-
+function PhiResidualPol(elt::Vector, Delta::Vector, vals::Vector, Lambda::Vector, e::Int)
+  slope = -(Delta[2][2]-Delta[1][2])/(Delta[2][1]-Delta[1][1])
+  ResField=parent(Lambda[1][1])
+  Ff,y = PolynomialRing(ResField, "y")
+  res=Ff(0)
+  for i in Delta[1][1]:e:Delta[2][1]
+    j = numerator((i-Delta[1][1])//e) # e divides i-Delta[1][1]
+    tmp = AllCoeffGivenV(elt[i+1],vals,Delta[1][2]-(j*e*slope))
+    for c in tmp
+      if length(c) == 2
+        res = res + ResField(c[1])*prod([Lambda[1][l]^c[2][l] for l in eachindex(c[2])])*y^numerator((i-Delta[1][1])//e)
+      else
+        res = res + ResField(c[1])*prod([Lambda[1][l]^c[2][l] for l in eachindex(c[2])])*prod([Lambda[l-1]^c[l] for l in 3:length(c)])*y^numerator((i-Delta[1][1])//e)
+# JULIA : getting a warning that I should use eachindex for the loop 3:length(c)... but I dunno how to avoid indices 1 and 2 with eachindex
+      end
+    end
   end
+  return res
 end

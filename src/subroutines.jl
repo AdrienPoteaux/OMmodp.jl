@@ -31,7 +31,7 @@ end
 
 Computes the N-th approximate root of F
 
-We assume that N divides deg(F)
+We assume that N divides deg(F) (an error is raised otherwise)
 """
 function AppRoot(F::Generic.Poly{T},N::Int) where {T}
     #  In: F in A[x] of degree d, N dividing d
@@ -88,9 +88,9 @@ end
 """
     PhiExp(F::Generic.Poly{T},Phi::Vector{Generic.Poly{T}}) where {T}
 
-Computes the Phi-adic expansion of F
+Computes the Phi-adic expansion of F (i.e. list of lists of ... of lists of elements of the base ring A)
 
-Phi is a table of polynomials
+Phi is a table of polynomials ; we assume that Phi[1] has degree 1 (as in NaOl21)
 """
 function PhiExp(F::Generic.Poly{T},Phi::Vector{Generic.Poly{T}}) where {T}
 #  In: F in A[x], Phi a list of such polynomials with "dividing degrees"
@@ -100,5 +100,6 @@ function PhiExp(F::Generic.Poly{T},Phi::Vector{Generic.Poly{T}}) where {T}
     if k>1
         return [PhiExp(i,Phi[1:k-1]) for i in tmp]
     end
-    return tmp
+    # Assuming that degree(Phi[1]) is 1 here
+    return [coeff(i,0) for i in tmp]
 end

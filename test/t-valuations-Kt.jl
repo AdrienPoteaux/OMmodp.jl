@@ -1,5 +1,5 @@
-function Main.OMFacto.:BivCoeff(elt::Generic.Poly{fpRelPowerSeriesRingElem}, i::Int64, n::Int64) # ICI GENERIQUE j'aimerais preciser le RingElem en K[[t]]; Comment faire ?
-    return coeff(coeff(elt,i),n)
+function Main.OMFacto.:CoeffAndExp(elt::fpRelPowerSeriesRingElem, n::Int64) # ICI GENERIQUE j'aimerais preciser le RingElem en K[[t]]; Comment faire ?
+    return [coeff(elt,n),[n]]
 end
 
 function TestPhiValKt()
@@ -32,5 +32,5 @@ function TestAllCoeffGivenVKt()
     Phi=[x+132*t^10+210*t^2,x^2+(53*t^10+209*t^2)*x+107*t^12+t^4+103*t^3,x^4+(106*t^10+207*t^2)*x^3+(2*t^12+6*t^4+206*t^3)*x^2+(5*t^14+108*t^13+201*t^6+10*t^5)*x+15*t^15+210*t^9+7*t^8+206*t^7+4*t^6]
     elt=PhiExp(F,Phi)   
     vals=[3//2,15//4]
-    return AllCoeffGivenV(elt[1],vals,13) == [[GF(211)(40),13,0,0,0]]
+    return AllCoeffGivenV(elt[1],vals,13) == [[GF(211)(40),[13],0,0]]
 end
