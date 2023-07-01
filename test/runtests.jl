@@ -17,10 +17,12 @@ include("t-valuations-Kt1t2.jl")
     @test TestPhiValKt()
     @test TestPhiNewtonPolygonKt()
     @test TestAllCoeffGivenVKt()# to remove in the end ?
+    @test TestPhiResidualPolKt1t2()
     # Testing valuation / Newton polygon for Qp(3)[x]
     @test TestPhiValPadic()
     @test TestPhiNewtonPolygonPadic()
     @test TestAllCoeffGivenVPadic()# to remove in the end ?
+    @test TestPhiResidualPolPadic()
     # Testing valuation / Newton polygon for GF(149)[[t1,t2]][x]
     @test TestPhiValKt1t2()
     @test TestPhiNewtonPolygonKt1t2()

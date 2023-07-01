@@ -236,14 +236,6 @@ function ValueGroup(A)
   error("ValueGroup must be defined for our base ring. It is suppose to provide generators of the value group")
 end
 
-#=
-Description in our 2022 paper with Barcelona : -> on va essayer de suivre Nart / Oliveira plutôt.
-Given mu a valuation, phi a key polynomial of minimum degree
-
-We take u a unit, i.e. an element of K[x] of degree < deg(phi) with valuation e*mu(phi).
-
-Then we correct the coefficients by multiplying by u^{j-d} the j-th coefficient (and dividing by the leading coefficient if need be).
-=#
 """
     PhiResidualPol(elt::Vector, Delta::Vector, vals::Vector, Lambda::Vector, e::Int)
 
@@ -257,12 +249,14 @@ ResField : the base field of the residual polynomial
 IMPORTANT : we assume that a function CoeffAndExp (T, n) exists (the user must define it)
 (it is used in the internal function AllCoeffGivenV)
 """
+# ICI : je passe par une pente ici, et pas uniquement par une valuation... que veut-on faire in fine ?
+# (valuation definie par la dite pente bien sur)
 function PhiResidualPol(elt::Vector, Delta::Vector, vals::Vector, Lambda::Vector, e::Int)
-  slope = -(Delta[2][2]-Delta[1][2])/(Delta[2][1]-Delta[1][1])
+  slope = -(Delta[2][2]-Delta[1][2])//(Delta[2][1]-Delta[1][1])
   ResField=parent(Lambda[1][1])
   Ff,y = PolynomialRing(ResField, "y")
   res=Ff(0)
-  for i in Delta[1][1]:e:Delta[2][1]
+  for i in numerator(Delta[1][1]):e:numerator(Delta[2][1])
     j = numerator((i-Delta[1][1])//e) # e divides i-Delta[1][1]
     tmp = AllCoeffGivenV(elt[i+1],vals,Delta[1][2]-(j*e*slope))
     for c in tmp
