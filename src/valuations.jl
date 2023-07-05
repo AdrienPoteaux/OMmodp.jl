@@ -232,10 +232,6 @@ function AllCoeffGivenV(elt, vals::Vector, v)
   return res
 end
 
-function ValueGroup(A)
-  error("ValueGroup must be defined for our base ring. It is suppose to provide generators of the value group")
-end
-
 """
     PhiResidualPol(elt::Vector, Delta::Vector, vals::Vector, Lambda::Vector, e::Int)
 
@@ -251,19 +247,19 @@ IMPORTANT : we assume that a function CoeffAndExp (T, n) exists (the user must d
 """
 # ICI : je passe par une pente ici, et pas uniquement par une valuation... que veut-on faire in fine ?
 # (valuation definie par la dite pente bien sur)
-function PhiResidualPol(elt::Vector, Delta::Vector, vals::Vector, Lambda::Vector, e::Int)
+function PhiResidualPol(elt::Vector, Delta::Vector, vals::Vector, Lambda::Vector, e)
   slope = -(Delta[2][2]-Delta[1][2])//(Delta[2][1]-Delta[1][1])
   ResField=parent(Lambda[1][1])
   Ff,y = PolynomialRing(ResField, "y")
   res=Ff(0)
   for i in numerator(Delta[1][1]):e:numerator(Delta[2][1])
     j = numerator((i-Delta[1][1])//e) # e divides i-Delta[1][1]
-    tmp = AllCoeffGivenV(elt[i+1],vals,Delta[1][2]-(j*e*slope))
+    tmp = AllCoeffGivenV(elt[(Int)(i+1)],vals,Delta[1][2]-(j*e*slope))
     for c in tmp
       if length(c) == 2
-        res = res + ResField(c[1])*prod([Lambda[1][l]^c[2][l] for l in eachindex(c[2])])*y^numerator((i-Delta[1][1])//e)
+        res = res + ResField(c[1])*prod([Lambda[1][l]^c[2][l] for l in eachindex(c[2])])*y^(Int(numerator((i-Delta[1][1])//e)))
       else
-        res = res + ResField(c[1])*prod([Lambda[1][l]^c[2][l] for l in eachindex(c[2])])*prod([Lambda[l-1]^c[l] for l in 3:length(c)])*y^numerator((i-Delta[1][1])//e)
+        res = res + ResField(c[1])*prod([Lambda[1][l]^c[2][l] for l in eachindex(c[2])])*prod([Lambda[l-1]^c[l] for l in 3:length(c)])*y^(Int(numerator((i-Delta[1][1])//e)))
 # JULIA : getting a warning that I should use eachindex for the loop 3:length(c)... but I dunno how to avoid indices 1 and 2 with eachindex
       end
     end

@@ -29,7 +29,7 @@ function Main.OMFacto.:CoeffAndExp(elt::AbstractAlgebra.Generic.LaurentMPolyWrap
     return [coeff(elt.mpoly,ind),ind]
 end
 
-# exact same function over Fq
+# exact same function over Fq -> mutualiser avec du Union dans les titres ?
 function Main.OMFacto.:CoeffAndExp(elt::AbstractAlgebra.Generic.LaurentMPolyWrap{fqPolyRepFieldElem, fqPolyRepMPolyRingElem, AbstractAlgebra.Generic.LaurentMPolyWrapRing{fqPolyRepFieldElem, fqPolyRepMPolyRing}}, n::nf_elem)
     c=representation_matrix(n)[1,:]
     shift=[0,0]
@@ -81,6 +81,60 @@ function Main.OMFacto.:valuation(elt::AbstractAlgebra.Generic.LaurentMPolyWrap{f
     return res
 end
 
+# will not work correctly if we try several K[[t1,...,tn]] cases
+function Main.OMFacto.ValueGroup(A::AbstractAlgebra.Generic.LaurentMPolyWrapRing{fpFieldElem, fpMPolyRing})
+    z = PolynomialRing(QQ, "z")[2]
+    Qa, a = NumberField(z^2-2, "a")
+    return [Qa(1),a]
+end
+
+# same over Fq
+function Main.OMFacto.ValueGroup(A::AbstractAlgebra.Generic.LaurentMPolyWrapRing{fqPolyRepFieldElem, fqPolyRepMPolyRing})
+    z = PolynomialRing(QQ, "z")[2]
+    Qa, a = NumberField(z^2-2, "a")
+    return [Qa(1),a]
+end
+
+# same over Fq
+function Main.OMFacto.ResidueField(A::AbstractAlgebra.Generic.LaurentMPolyWrapRing{fpFieldElem, fpMPolyRing})
+    return base_ring(A) # enough ?
+end
+
+# will not work correctly if we try several K[[t1,...,tn]] cases
+function Main.OMFacto.GammaCofactors(Gamma::Vector{nf_elem},gamma::nf_elem)
+    # Using that I use only two variables here
+    M=[representation_matrix(Gamma[1])[1,:];representation_matrix(Gamma[2])[1,:]]
+    g=representation_matrix(gamma)[1,:]
+    # we want to solve M*v=g
+    return M^(-1)*transpose(g) # ca c'est une matrice, je voudrais en faire un vecteur. Neanmoins, res[1] et res[2] ca marche...
+end
+
+# In  : F some base field, P an irreducible polynomial above it, s a string to express the new variable.
+# Out : The field extension F(P), and an element of this new field that is a root of P.
+function Main.OMFacto.IncResField(F,P::fpPolyRingElem,s::String)
+    if degree(F)==1 return FiniteField(P,s) end
+    p=characteristic(F)
+    z=gen(F)
+    FF,zz=FiniteField(p,degree(F)*degree(P),s)
+    # ICI : I am not sure that elements of F will always convert into elements of FF via FF(z).
+    # Should we check that the minimal polynomial of F factorise on FF ?
+    y=PolynomialRing(FF,"y")
+    tmp=roots(sum([FF(coeff(R,i))*y^i for i in 0:degree(R)])) # not testing if there is a root here...
+    return FF, tmp[1]
+end
+
+# la meme sur Fq
+function Main.OMFacto.IncResField(F,P::fqPolyRepPolyRingElem,s::String)
+    if degree(F)==1 return FiniteField(P,s) end
+    p=characteristic(F)
+    z=gen(F)
+    FF,zz=FiniteField(p,degree(F)*degree(P),s)
+    # ICI : I am not sure that elements of F will always convert into elements of FF via FF(z).
+    # Should we check that the minimal polynomial of F factorise on FF ?
+    y=PolynomialRing(FF,"y")
+    tmp=roots(sum([FF(coeff(R,i))*y^i for i in 0:degree(R)])) # not testing if there is a root here...
+    return FF, tmp[1]
+end
 
 function TestPhiValKt1t2()
     R, (t1, t2) = LaurentPolynomialRing(GF(149), ["t1", "t2"])
