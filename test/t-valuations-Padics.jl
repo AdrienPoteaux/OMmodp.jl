@@ -1,11 +1,4 @@
 ## Je prends l'exemple des slides pour rester simple
-
-function Main.OMFacto.:CoeffAndExp(elt::padic, n::Int64)
-    aq=lift(QQ,elt)
-    p=elt.parent.p
-    return [floor(mod(aq,p^(n+1))//p^n),[n]]
-end
-
 function TestPhiValPadic()
     A    = PadicField(3, 50)
     L, x = PolynomialRing(A,"x")

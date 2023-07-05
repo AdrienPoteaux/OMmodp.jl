@@ -1,12 +1,3 @@
-function Main.OMFacto.:CoeffAndExp(elt::fpRelPowerSeriesRingElem, n::Int64) # ICI GENERIQUE j'aimerais preciser le RingElem en K[[t]]; Comment faire ?
-    return [coeff(elt,n),[n]]
-end
-
-# same for Fq
-function Main.OMFacto.:CoeffAndExp(elt::fqPolyRepRelPowerSeriesRingElem, n::Int64)
-    return [coeff(elt,n),[n]]
-end
-
 function TestPhiValKt()
     A, t = PowerSeriesRing(GF(211), 33, "t")
     L, x = PolynomialRing(A,"x")
@@ -42,7 +33,7 @@ end
 
 function TestPhiResidualPolKt()
     p = 211
-    F0 = FiniteField(p,1)[1]
+    F0 = GF(p)
     A, t = PowerSeriesRing(F0, 33, "t")
     L, x = PolynomialRing(A,"x")
 
@@ -60,7 +51,6 @@ function TestPhiResidualPolKt()
     y=PolynomialRing(F0,"y")[2]
     if R0!=(y^2+y+3)^4 return false end
 
-    y=PolynomialRing(GF(p),"y")[2] # ICI faudrait voir comment gerer les extensions de Fq dnas le futur
     F1,z0=FiniteField(y^2+y+3,"z0")
     P1=PhiExp(P,Phi)
     N1=PhiNewtonPolygon(P1,vals)
@@ -69,7 +59,7 @@ function TestPhiResidualPolKt()
     Lambda1=[[F1(1)],z0]
     R1=PhiResidualPol(P1,N1,vals,Lambda1,e1)
 
-    y=PolynomialRing(F1,"y")[2] # ICI faudrait voir comment gerer les extensions de Fq dnas le futur
+    y=PolynomialRing(F1,"y")[2]
     if R1!=y^2+208 return false end
 
     return true

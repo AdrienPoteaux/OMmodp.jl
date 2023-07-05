@@ -3,9 +3,15 @@ using Test
 using Nemo
 using DataStructures
 
+# Functions specific to base rings
+include("functions-Kt.jl")
+include("functions-Padics.jl")
+include("functions-Kt1t2.jl")
+
+# Testing functions
 include("t-subroutines-Kt.jl")
 include("t-valuations-Kt.jl")
-include("t-valuations-padic.jl")
+include("t-valuations-Padics.jl")
 include("t-valuations-Kt1t2.jl")
 
 @testset "OMmodp.jl" begin
