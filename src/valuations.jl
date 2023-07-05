@@ -35,7 +35,7 @@ function LowerConvexHull(L) # based on Graham algorithm
   push!(s,L[1])
   push!(s,L[2])
   i=3
-  while i<length(L)
+  while i<=length(L)
     if length(s) == 1
       push!(s,L[i])
       i+=1
