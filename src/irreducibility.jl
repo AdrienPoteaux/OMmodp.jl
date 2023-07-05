@@ -70,6 +70,33 @@ function OneSlope(Delta::Vector, OldGamma::Vector)
     return gamma,Gamma,numerator(prode//prodd),Lb,L
 end
 
+"""
+    FirstApproximants(P::Generic.Poly{T}) where {T}
+
+    Test if the polynomial P is irreducible over its base ring.
+    If it is, the function outputs true, together with the list of successive
+    (key polynomial, associated polynomial, irreducible factor of the residual polynomial)
+
+    If it is not, the same list is provided (up to the point where we prove non irreducibility)
+    A third element is returned : [Phi,vals,Lambda,NP or RP] where
+     * Phi is the list of key Polynomials
+     * vals is the list associated augmented valuations
+     * Lambda is the current list of correcting terms (for residual polynomial computation)
+     * Last parameter is either (the size of the last tuple in the 2nd output parameter tells us which one)
+        ** the last computed Newton polygon (with several slopes)
+        ** the factorisation of the last computed residual polynomial (with at least two coprime factors)
+    This list will be provided to the Hensel algorithm to start the factorisation of P
+
+    IMPORTANT : several functions are supposed to exist for our base ring
+     * A valuation function (elements of the value groupe must be provided with a way to compare them ; one must also have a numerator function for them).
+     * A function CoeffAndExp.
+     * ValueGroup a function that provides a basis for a finitely generated subgroup of the group value of our valuation.
+     * ResidueField that provides the residue field associated to the base ring.
+     * GammaCofactors that given a base for some ZZ-group Gamma and an element gamma outputs a vector v (of rationals) such that gamma=Gamma.v (scalar product)
+     * IncResField a function that given a field Ff and an irreducible polynomial Pf over it, compute the associated field extension and a root of Pf in this field
+"""
+# ICI : we need to add an optional parameter that provide already computed things for recursive calls after some factorisation step.
+# Le fait de donner approximants en sortie quand c'est pas irreductible n'est utile que pour le reutiliser en cas de futur appel recursif ?
 function FirstApproximants(P::Generic.Poly{T}) where {T}
     N=degree(P)
     A=base_ring(P)
@@ -87,12 +114,12 @@ function FirstApproximants(P::Generic.Poly{T}) where {T}
         dvt=PhiExp(P,Phi)
         NP=PhiNewtonPolygon(dvt,vals)
         approximants=[approximants;[last(Phi)]]
-        if length(NP)>2 return [false,approximants] end
+        if length(NP)>2 return [false,approximants,[Phi,vals,Lambda,NP]] end
         gamma,Gamma,e,Lb,L=OneSlope(NP, Gamma)
         approximants[length(approximants)]=[approximants[length(approximants)];gamma]
         RP=PhiResidualPol(dvt, NP, vals, Lambda, e)
         fac=factor(RP)
-        if fac.fac.count > 1 return [false,approximants] end
+        if fac.fac.count > 1 return [false,approximants,[Phi,vals,Lambda,fac]] end
         vals=[vals;gamma]
         tmp=[i for i in fac.fac][1]
         R=tmp.first
@@ -115,9 +142,9 @@ function FirstApproximants(P::Generic.Poly{T}) where {T}
         end
         for i in 2:length(Lambda)
             tmp=GammaCofactors(Gamma,vals[i-1])
-            Lamba[i]=Lambda[i]*z^(-sum([tmp[i]*L[i] for i in 1:k]))
+            Lambda[i]=Lambda[i]*z^(-numerator(sum([tmp[i]*L[i] for i in 1:k])))
         end
         Lambda=[Lambda;z^Lb]
     end
-    return True,approximants
+    return [true,approximants]
 end

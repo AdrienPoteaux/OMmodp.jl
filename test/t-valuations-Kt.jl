@@ -10,6 +10,7 @@ function TestPhiValKt()
 end
 
 function TestPhiNewtonPolygonKt()
+    ## 2 points example
     A, t = PowerSeriesRing(GF(211), 33, "t")
     L ,x = PolynomialRing(A,"x")
 
@@ -17,7 +18,20 @@ function TestPhiNewtonPolygonKt()
     Phi=[x+132*t^10+210*t^2,x^2+(53*t^10+209*t^2)*x+107*t^12+t^4+210*t^3]
     vals=[3//2]
     elt=PhiExp(F,Phi)
-    return PhiNewtonPolygon(elt,vals)==[[0,15],[4,0]]
+    if PhiNewtonPolygon(elt,vals)!=[[0,15],[4,0]] return false end
+    ## 3 points example
+    p=263
+    K,t=PowerSeriesRing(GF(p),33,"t")
+    A,x=PolynomialRing(K,"x")
+    phi0=x^2+x+1 # f=2
+    phi1=phi0^3-t^2 # mu1(phi0)=2/3 (e=3, f=1)
+    phi2=phi1^6+phi0*t*phi1^3+3*t^5 # mu2(phi1)=5/6 (e=2, f=2)
+
+    Phi=[x,phi0,phi1]
+    vals=[Rational(0),2//3]
+
+    dvt=PhiExp(phi2,Phi)
+    return PhiNewtonPolygon(dvt,vals)==[[0,5//1],[3,5//3],[6,0//1]]
 end
 
 function TestAllCoeffGivenVKt()

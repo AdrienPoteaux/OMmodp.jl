@@ -14,7 +14,7 @@ function Main.OMFacto.:numerator(e::nf_elem) return e*denominator(e) end
 
 import AbstractAlgebra
 
-function Main.OMFacto.:CoeffAndExp(elt::AbstractAlgebra.Generic.LaurentMPolyWrap{fpFieldElem, fpMPolyRingElem, AbstractAlgebra.Generic.LaurentMPolyWrapRing{fpFieldElem, fpMPolyRing}}, n::nf_elem)
+function Main.OMFacto.:CoeffAndExp(elt::Generic.LaurentMPolyWrap{fpFieldElem, fpMPolyRingElem, Generic.LaurentMPolyWrapRing{fpFieldElem, fpMPolyRing}}, n::nf_elem)
     c=representation_matrix(n)[1,:]
     shift=[0,0]
     # There is no coeff function for Multivariate Laurent Polynomials.

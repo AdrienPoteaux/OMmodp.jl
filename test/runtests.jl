@@ -16,13 +16,14 @@ include("t-valuations-Kt1t2.jl")
 
 # Testing main features (irreducibility test, hensel, factorisation algorithm)
 include("t-main-Kt1t2.jl")
+include("t-main-Kt.jl")
 
 @testset "OMmodp.jl" begin
     # Testing subroutines for GF(211)[[t]][x]
     @test TestTaylorExpKt()
     @test TestAppRootKt()
     @test TestPhiExpKt()
-    # Testing valuation / Newton polygon for GF(211)[[t]][x]
+    # Testing valuation / Newton polygon for GF(p)[[t]][x]
     @test TestPhiValKt()
     @test TestPhiNewtonPolygonKt()
     @test TestAllCoeffGivenVKt()# to remove in the end ?
@@ -39,4 +40,5 @@ include("t-main-Kt1t2.jl")
     @test TestPhiResidualPolKt1t2()
     # Testing irreducibility test over several base rings
     @test TestFirstApproximantsKt1t2()
+    @test TestFirstApproximantsKt()
 end

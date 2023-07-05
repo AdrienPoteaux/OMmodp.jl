@@ -201,6 +201,7 @@ function CoeffAndExp(elt,n)
 end
 
 # More an intern function than anything else
+# ICI : ajouter un booleen qui renvoie tous les exposants possibles, peu importe le coefficient ?
 function AllCoeffGivenV(elt, vals::Vector, v)
 #  In: elt a Phi expansion of some polynomial (either a list of list of ... elements of A, either an element of A)
 #      vals the valuation of the key polynomials and v some targeted valuation
@@ -247,6 +248,7 @@ IMPORTANT : we assume that a function CoeffAndExp (T, n) exists (the user must d
 """
 # ICI : je passe par une pente ici, et pas uniquement par une valuation... que veut-on faire in fine ?
 # (valuation definie par la dite pente bien sur)
+## ICI : we should also code the special case when Delta has a single point.
 function PhiResidualPol(elt::Vector, Delta::Vector, vals::Vector, Lambda::Vector, e)
   slope = -(Delta[2][2]-Delta[1][2])//(Delta[2][1]-Delta[1][1])
   ResField=parent(Lambda[1][1])
