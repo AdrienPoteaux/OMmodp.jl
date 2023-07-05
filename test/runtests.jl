@@ -8,11 +8,14 @@ include("functions-Kt.jl")
 include("functions-Padics.jl")
 include("functions-Kt1t2.jl")
 
-# Testing functions
+# Testing subroutines
 include("t-subroutines-Kt.jl")
 include("t-valuations-Kt.jl")
 include("t-valuations-Padics.jl")
 include("t-valuations-Kt1t2.jl")
+
+# Testing main features (irreducibility test, hensel, factorisation algorithm)
+include("t-main-Kt1t2.jl")
 
 @testset "OMmodp.jl" begin
     # Testing subroutines for GF(211)[[t]][x]
@@ -34,4 +37,6 @@ include("t-valuations-Kt1t2.jl")
     @test TestPhiNewtonPolygonKt1t2()
     @test TestAllCoeffGivenVKt1t2()# to remove in the end ?
     @test TestPhiResidualPolKt1t2()
+    # Testing irreducibility test over several base rings
+    @test TestFirstApproximantsKt1t2()
 end

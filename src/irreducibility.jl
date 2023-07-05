@@ -21,12 +21,12 @@ end
 function mygcdx(a,b)
     g,l,lb=gcdx(a,b)
     while l<0
-        l=l+b
-        lb=lb-a
+        l+=b
+        lb-=a
     end
     while l>=(b//g)
-        l=l-b
-        lb=lb+a
+        l-=b
+        lb+=a
     end
     return g,l,lb
 end
