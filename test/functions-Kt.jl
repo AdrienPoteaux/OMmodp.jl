@@ -2,15 +2,27 @@ function Main.OMFacto.:CoeffAndExp(elt::fpRelPowerSeriesRingElem, n::Int64) # IC
     return [coeff(elt,n),[n]]
 end
 
-function Main.OMFacto.:ValueGroup(A::fpRelPowerSeriesRing)
-    return [Rational(1)]
+function Main.OMFacto.BaseGenerators(A::fpRelPowerSeriesRing)
+    return [gen(A)]
 end
 
 function Main.OMFacto.:ResidueField(A::fpRelPowerSeriesRing)
     return base_ring(A) # enough ?
 end
 
-function Main.OMFacto.:GammaCofactors(Gamma::Vector{Rational{T}},gamma::Rational{T}) where {T}
+function Main.OMFacto.:GammaCofactors(Gamma::Vector{Rational{Int}},gamma::Rational{Int})
+    return [gamma//Gamma[1]]
+end
+
+function Main.OMFacto.:GammaCofactors(Gamma::Vector{Int},gamma::Rational{Int})
+    return [gamma//Gamma[1]]
+end
+
+function Main.OMFacto.:GammaCofactors(Gamma::Vector{Rational{Int}},gamma::Int)
+    return [gamma//Gamma[1]]
+end
+
+function Main.OMFacto.:GammaCofactors(Gamma::Int,gamma::Int)
     return [gamma//Gamma[1]]
 end
 

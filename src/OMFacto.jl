@@ -19,5 +19,6 @@ export PhiNewtonPolygon
 export AllCoeffGivenV # no export in the final version ? (needed for the test to work)
 export PhiResidualPol
 export FirstApproximants
+export Representant
 
 end

@@ -1,5 +1,5 @@
-function ValueGroup(A)
-    error("ValueGroup must be defined for our base ring. It is supposed to provide generators of the value group")
+function BaseGenerators(A)
+    error("BaseGenerators must be defined for our base ring. It is supposed to provide generators of the base ring")
   end  
 
 function ResidueField(A)
@@ -90,7 +90,7 @@ end
     IMPORTANT : several functions are supposed to exist for our base ring
      * A valuation function (elements of the value groupe must be provided with a way to compare them ; one must also have a numerator function for them).
      * A function CoeffAndExp.
-     * ValueGroup a function that provides a basis for a finitely generated subgroup of the group value of our valuation.
+     * BaseGenerators a function that provides the generators of the base ring.
      * ResidueField that provides the residue field associated to the base ring.
      * GammaCofactors that given a base for some ZZ-group Gamma and an element gamma outputs a vector v (of rationals) such that gamma=Gamma.v (scalar product)
      * IncResField a function that given a field Ff and an irreducible polynomial Pf over it, compute the associated field extension and a root of Pf in this field
@@ -100,10 +100,10 @@ end
 function FirstApproximants(P::Generic.Poly{T}) where {T}
     N=degree(P)
     A=base_ring(P)
-    FirstGamma=ValueGroup(A) # we need to keep that one for later use.
+    FirstGamma=map(valuation,BaseGenerators(A)) # we need to keep that one for later use.
     k=length(FirstGamma)
     Gamma=FirstGamma
-    vals=[Gamma[1]][1:0] # so that type of Phi is always correct
+    vals=[Gamma[1]][1:0] # so that type is always correct
     Phi=[P][1:0] # same
     F=ResidueField(A)
     Lambda=[[F(1) for i in 1:k]] # This is the list of R_0(\tau_{-1,j})
@@ -118,9 +118,9 @@ function FirstApproximants(P::Generic.Poly{T}) where {T}
         gamma,Gamma,e,Lb,L=OneSlope(NP, Gamma)
         approximants[length(approximants)]=[approximants[length(approximants)];gamma]
         RP=PhiResidualPol(dvt, NP, vals, Lambda, e)
+        vals=[vals;gamma]
         fac=factor(RP)
         if fac.fac.count > 1 return [false,approximants,[Phi,vals,Lambda,fac]] end
-        vals=[vals;gamma]
         tmp=[i for i in fac.fac][1]
         R=tmp.first
         N=tmp.second

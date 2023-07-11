@@ -48,10 +48,8 @@ function Main.OMFacto.:valuation(elt::AbstractAlgebra.Generic.LaurentMPolyWrap{f
 end
 
 # will not work correctly if we try several K[[t1,...,tn]] cases
-function Main.OMFacto.ValueGroup(A::AbstractAlgebra.Generic.LaurentMPolyWrapRing{fpFieldElem, fpMPolyRing})
-    z = PolynomialRing(QQ, "z")[2]
-    Qa, a = NumberField(z^2-2, "a")
-    return [Qa(1),a]
+function Main.OMFacto.BaseGenerators(A::AbstractAlgebra.Generic.LaurentMPolyWrapRing{fpFieldElem, fpMPolyRing})
+    return gens(A)
 end
 
 function Main.OMFacto.ResidueField(A::AbstractAlgebra.Generic.LaurentMPolyWrapRing{fpFieldElem, fpMPolyRing})

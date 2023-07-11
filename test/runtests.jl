@@ -38,6 +38,7 @@ include("t-main-Kt.jl")
     @test TestPhiNewtonPolygonKt1t2()
     @test TestAllCoeffGivenVKt1t2()# to remove in the end ?
     @test TestPhiResidualPolKt1t2()
+    @test TestRepresentantKt1t2()
     # Testing irreducibility test over several base rings
     @test TestFirstApproximantsKt1t2()
     @test TestFirstApproximantsKt()

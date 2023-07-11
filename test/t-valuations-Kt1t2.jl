@@ -87,3 +87,29 @@ function TestPhiResidualPolKt1t2()
     if R1!=(y^2 + 1406*z0)^8 return false end
     return true
 end
+
+function TestRepresentantKt1t2()
+    p=1523
+    F0=GF(p)
+    R, (t1, t2) = LaurentPolynomialRing(F0, ["t1", "t2"])
+    A, x = PolynomialRing(R, "x")
+    phi1=x^2+x+1 # introduit une extension de degre 2 (j)
+    phi2=phi1^72+A(1406*t1^6*t2^4) # pente 1/12+1/18*sqrt(2), ramification 36 ; pas d'extension de corps ici -> reductible.
+
+    Phi=[x+762,phi1,phi2]
+    y=PolynomialRing(GF(p),"y")[2]
+    F0,z0=FiniteField(y^2+1143,"z0")
+    y=PolynomialRing(F0,"y")[2]
+    R=y^36+825*z0
+
+    z = PolynomialRing(QQ, "z")[2]
+    Ka, a = NumberField(z^2-2, "a")
+    vals=[Ka(0),1//18*a+1//12]
+    Lambda=[[F0(1),F0(1)],z0]
+    v=2*a+3
+    if Representant(R,v,Phi,vals,Lambda)!=phi1^36+825*t1^3*t2^2*Phi[1] return false end
+
+    R=y^36+698*z0
+    if Representant(R,v,Phi,vals,Lambda)!=phi1^36+698*t1^3*t2^2*Phi[1] return false end # ICI : pas le bon coeff de Phi[1]
+    return true
+end
