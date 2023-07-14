@@ -43,3 +43,5 @@ include("t-main-Kt.jl")
     @test TestFirstApproximantsKt1t2()
     @test TestFirstApproximantsKt()
 end
+
+## Remark : faudrait tester les Padics avec Q comme corps de base et la valuation p-adique dessus (sans troncation par defaut donc)

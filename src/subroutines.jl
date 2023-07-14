@@ -20,7 +20,6 @@ end
 # ConstInv(K[[t]],n) is K(1)//n, i.e. base_ring(A)(1)//n
 # ConstInv(Qp,n) is either Qp(1//n)=Qp(1)//n or Fp(1//n)=Fp(1)//n ; to be investigated
 # Looks like ConstInv always work the same in my examples, so I add it here for the moment ; this might have to be done in "base ring" files later on.
-
 function ConstInv(A,n::Int64)
     return base_ring(A)(1)//n
 end
@@ -103,3 +102,24 @@ function PhiExp(F::Generic.Poly{T},Phi::Vector{Generic.Poly{T}}) where {T}
     # Assuming that degree(Phi[1]) is 1 here
     return [coeff(i,0) for i in tmp]
 end
+
+# Will be an internal function more than anything
+function PhiEval(l::Vector,Phi::Vector{Generic.Poly{T}}) where {T}
+    #  In: a list from PhiExp(F,phi)
+    # Out: normally, F
+        k=length(Phi)
+        L=Phi[1].parent
+        if k>1
+            res=L(0)
+            for i in eachindex(l)
+                res+=PhiEval(l[i],Phi[1:k-1])*Phi[k]^(i-1)
+            end
+            return res
+        end
+        # k is 1
+        res=L(0)
+        for i in eachindex(l)
+            res+=l[i]*Phi[k]^(i-1)
+        end
+        return res
+    end

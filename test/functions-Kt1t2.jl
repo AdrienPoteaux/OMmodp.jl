@@ -16,17 +16,10 @@ import AbstractAlgebra
 
 function Main.OMFacto.:CoeffAndExp(elt::Generic.LaurentMPolyWrap{fpFieldElem, fpMPolyRingElem, Generic.LaurentMPolyWrapRing{fpFieldElem, fpMPolyRing}}, n::nf_elem)
     c=representation_matrix(n)[1,:]
-    shift=[0,0]
-    # There is no coeff function for Multivariate Laurent Polynomials.
-    # We need to shift it via .mpoly but I do not know a way to get the shift done by this function...
-    # Therefore, I precompute this shift in a not nice way
-    for i in exponent_vectors(elt)
-        if i[1] < shift[1] shift[1]=i[1] end
-        if i[2] < shift[2] shift[2]=i[2] end
-    end
+    shift=elt.mindegs
     # Have to make a weird cast here
     ind = [Int64(numerator(c[1]))-shift[1],Int64(numerator(c[2]))-shift[2]]
-    return [coeff(elt.mpoly,ind),ind]
+    return [coeff(elt.mpoly,ind),ind+shift]
 end
 
 # Valuation on K[t1,t2] given by v(t1)=1 and v(t2)=sqrt(2)
@@ -77,4 +70,21 @@ function Main.OMFacto.IncResField(F,P::fpPolyRingElem,s::String)
     y=PolynomialRing(FF,"y")
     tmp=roots(sum([FF(coeff(R,i))*y^i for i in 0:degree(R)])) # not testing if there is a root here...
     return FF, tmp[1]
+end
+
+# This is ugly... is there a nice way to get the set of monomials ? That would make this code much nicer to write.
+function Main.OMFacto.BaseTruncation(elt::AbstractAlgebra.Generic.LaurentMPolyWrap{fpFieldElem, fpMPolyRingElem, AbstractAlgebra.Generic.LaurentMPolyWrapRing{fpFieldElem, fpMPolyRing}},n::nf_elem)
+    A=parent(elt)
+    res=A(0)
+    t1,t2=OMFacto.BaseGenerators(A)
+    z=PolynomialRing(QQ,"z")[2]
+    a=NumberField(z^2-2,"a")[2]
+    for i in exponent_vectors(elt)
+        e=i[1]+a*i[2]
+        if e > n continue end
+        # we have to use CoeffAndExp because of possible negative exponents...
+        tmp=OMFacto.CoeffAndExp(elt,e)
+        res+=tmp[1]*t1^i[1]*t2^i[2]
+    end
+    return res
 end

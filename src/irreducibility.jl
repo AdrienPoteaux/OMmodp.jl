@@ -1,6 +1,6 @@
 function BaseGenerators(A)
     error("BaseGenerators must be defined for our base ring. It is supposed to provide generators of the base ring")
-  end  
+end
 
 function ResidueField(A)
     error("ResidueField must be defined ; input type: ",typeof(A))

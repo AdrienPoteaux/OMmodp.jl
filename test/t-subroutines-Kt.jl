@@ -61,26 +61,6 @@ function TestTaylorExpKt()
     return true
 end
 
-function PhiEval(l::Vector,Phi::Vector{Generic.Poly{T}}) where {T}
-#  In: a list from PhiExp(F,phi)
-# Out: normally, F
-    k=length(Phi)
-    L=Phi[1].parent
-    if k>1
-        res=L(0)
-        for i in eachindex(l)
-            res+=PhiEval(l[i],Phi[1:k-1])*Phi[k]^(i-1)
-        end
-        return res
-    end
-    # k is 1
-    res=L(0)
-    for i in eachindex(l)
-        res+=l[i]*Phi[k]^(i-1)
-    end
-    return res
-end
-
 function TestPhiExpKt()
     A, x = PowerSeriesRing(GF(211), 33, "x")
     L, y = PolynomialRing(A,"y")
