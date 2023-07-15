@@ -81,10 +81,11 @@ function Main.OMFacto.BaseTruncation(elt::AbstractAlgebra.Generic.LaurentMPolyWr
     a=NumberField(z^2-2,"a")[2]
     for i in exponent_vectors(elt)
         e=i[1]+a*i[2]
-        if e > n continue end
+        if e < n
         # we have to use CoeffAndExp because of possible negative exponents...
-        tmp=OMFacto.CoeffAndExp(elt,e)
-        res+=tmp[1]*t1^i[1]*t2^i[2]
+            tmp=OMFacto.CoeffAndExp(elt,e)
+            res+=tmp[1]*t1^i[1]*t2^i[2]
+        end
     end
     return res
 end

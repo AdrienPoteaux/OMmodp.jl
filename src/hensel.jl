@@ -44,15 +44,15 @@ end
 function PhiHenselStep(F::Generic.Poly{X},G::Generic.Poly{X},H::Generic.Poly{X},S::Generic.Poly{X},T::Generic.Poly{X},Phi::Vector,vals::Vector,n,vG,vH) where {X}
     E=PhiTruncate(F-G*H,Phi,vals,2*n+vG+vH)
     q,r=divrem(S*E,H)
-    q=PhiTruncate(q,Phi,vals,vG+vH+2*n)
-    r=PhiTruncate(r,Phi,vals,vG+vH+2*n)
+    q=PhiTruncate(q,Phi,vals,2*n)
+    r=PhiTruncate(r,Phi,vals,vH+2*n)
     Gt=PhiTruncate(G+E*T+q*G,Phi,vals,vG+2*n)
-    Ht=PhiTruncate(H+r,Phi,vals,vH+2*n)
+    Ht=H+r # no truncation needed here.
     B=PhiTruncate(S*Gt+T*Ht-1,Phi,vals,2*n)
-    c,d=divrem(S*B,Ht) ## integer division error ici ?
-    c=PhiTruncate(c,Phi,vals,2*n)
-    d=PhiTruncate(d,Phi,vals,2*n)
-    St=PhiTruncate(S-d,Phi,vals,2*n-vG)
+    c,d=divrem(S*B,Ht)
+    c=PhiTruncate(c,Phi,vals,2*n-vG-vH)
+    d=PhiTruncate(d,Phi,vals,2*n-vG)
+    St=S-d # no truncation needed here.
     Tt=PhiTruncate(T-B*T-c*Gt,Phi,vals,2*n-vH)
     return Gt,Ht,St,Tt
 end
