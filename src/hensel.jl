@@ -27,24 +27,14 @@ function PhiInitHensel(g,h,vg,vh,Phi::Vector,vals::Vector,Lambda::Vector,e::Int)
     return G,H,S,T
 end
 
-# Return the truncation of dvt (any element of valuation greater than n is removed)
-### WARNING : dvt is probably a pointer, so we are actually working in place here
-function _PhiTruncate(dvt,vals::Vector,n)
-    res=dvt
-    k=length(vals)
-    if k==0
-        return BaseTruncation(dvt,n) # user must define it for our base ring.
-    end
-    for i in eachindex(dvt)
-        res[i]=_PhiTruncate(dvt[i],vals[1:k-1],n-(i-1)*vals[k])
+function PhiTruncate(P::Generic.Poly{T}, Phi::Vector, vals::Vector, n) where {T}
+    dvt=PhiExpMonomials(P,Phi)
+    res=0
+    for i in dvt
+        tmp=BaseTruncation(i[1],n-sum(vals.*i[2:end]))
+        if tmp!=0 res+=tmp*prod(Phi.^i[2:end]) end
     end
     return res
-end
-
-function PhiTruncate(P::Generic.Poly{T}, Phi::Vector, vals::Vector, n) where {T}
-    dvt=PhiExp(P,Phi)
-    dvt=_PhiTruncate(dvt,vals,n)
-    return PhiEval(dvt,Phi)
 end
 
 # In  : mu(F-G*H)>=n+mu(F), mu(S*G+T*H-1)>=n

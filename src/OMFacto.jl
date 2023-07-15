@@ -15,6 +15,7 @@ function (F::fqPolyRepField)(n::fpFieldElem) return F(lift(n)) end # conversion 
 export AppRoot
 export TaylorExp
 export PhiExp
+export PhiExpMonomials
 export PhiVal
 export PhiNewtonPolygon
 export AllCoeffGivenV # no export in the final version ? (needed for the test to work)

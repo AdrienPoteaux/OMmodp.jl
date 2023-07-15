@@ -105,21 +105,48 @@ end
 
 # Will be an internal function more than anything
 function PhiEval(l::Vector,Phi::Vector{Generic.Poly{T}}) where {T}
-    #  In: a list from PhiExp(F,phi)
-    # Out: normally, F
-        k=length(Phi)
-        L=Phi[1].parent
-        if k>1
-            res=L(0)
-            for i in eachindex(l)
-                res+=PhiEval(l[i],Phi[1:k-1])*Phi[k]^(i-1)
-            end
-            return res
-        end
-        # k is 1
+#  In: a list from PhiExp(F,phi)
+# Out: normally, F
+    k=length(Phi)
+    L=Phi[1].parent
+    if k>1
         res=L(0)
         for i in eachindex(l)
-            res+=l[i]*Phi[k]^(i-1)
+            res+=PhiEval(l[i],Phi[1:k-1])*Phi[k]^(i-1)
         end
         return res
     end
+    # k is 1
+    res=L(0)
+    for i in eachindex(l)
+        res+=l[i]*Phi[k]^(i-1)
+    end
+    return res
+end
+
+"""
+    PhiExpMonomials(P::Generic.Poly{T},Phi::Vector) where {T}
+
+Computes the Phi-adic expansion of F, expressed as a list of monomials
+  (i.e. a list of [c,i_0,...,i_k] providing a coefficient - element of A - and a list of exponents - for the Phi[j]).
+
+Phi is a table of polynomials ; we assume that Phi[1] has degree 1 (as in NaOl21)
+"""
+function PhiExpMonomials(P::Generic.Poly{T},Phi::Vector) where {T}
+    k=length(Phi)
+    tmp=TaylorExp(P,Phi[k])
+    res=[]
+    if k>1
+        for i in eachindex(tmp)
+            if tmp[i]!=0
+                rec=PhiExpMonomials(tmp[i],Phi[1:k-1])
+                for j in rec
+                    res=[res;[[j;i-1]]]
+                end
+            end
+        end
+        return res
+    end
+    # below we use the assumption that Phi[1] has degree 1 (by taking the 0 coefficient)
+    return filter(x->x[1]!=0,[[coeff(tmp[i],0),i-1] for i in eachindex(tmp)])
+end
