@@ -52,7 +52,7 @@ end
 # will not work correctly if we try several K[[t1,...,tn]] cases
 function Main.OMFacto.GammaCofactors(Gamma::Vector{nf_elem},gamma::nf_elem)
     # Using that I use only two variables here
-    M=[representation_matrix(Gamma[1])[1,:];representation_matrix(Gamma[2])[1,:]]
+    M=transpose([representation_matrix(Gamma[1])[1,:];representation_matrix(Gamma[2])[1,:]])
     g=representation_matrix(gamma)[1,:]
     # we want to solve M*v=g
     return M^(-1)*transpose(g) # ca c'est une matrice, je voudrais en faire un vecteur. Neanmoins, res[1] et res[2] ca marche...
