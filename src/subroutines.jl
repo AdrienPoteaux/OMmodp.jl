@@ -32,6 +32,8 @@ Computes the N-th approximate root of F
 
 We assume that N divides deg(F) (an error is raised otherwise)
 """
+# This function actually increases the precision on the base field. One should add a parameter for maximum precision ?
+# What kind of trunctation ? Powers of pi only ? Valuation truncation ? If valuation truncation, would need a lot more parameters...
 function AppRoot(F::Generic.Poly{T},N::Int) where {T}
     #  In: F in A[x] of degree d, N dividing d
     # Out: the N-th approximate root of F

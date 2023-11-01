@@ -68,7 +68,20 @@ function Main.OMFacto.IncResField(F,P::fpPolyRingElem,s::String)
     # ICI : I am not sure that elements of F will always convert into elements of FF via FF(z).
     # Should we check that the minimal polynomial of F factorise on FF ?
     y=PolynomialRing(FF,"y")
-    tmp=roots(sum([FF(coeff(R,i))*y^i for i in 0:degree(R)])) # not testing if there is a root here...
+    tmp=roots(sum([FF(coeff(P,i))*y^i for i in 0:degree(P)])) # not testing if there is a root here...
+    return FF, tmp[1]
+end
+
+# same over Fq
+function Main.OMFacto.IncResField(F,P::fqPolyRepPolyRingElem,s::String)
+    if degree(F)==1 return FiniteField(P,s) end
+    p=characteristic(F)
+    z=gen(F)
+    FF,zz=FiniteField(p,degree(F)*degree(P),s)
+    # ICI : I am not sure that elements of F will always convert into elements of FF via FF(z).
+    # Should we check that the minimal polynomial of F factorise on FF ?
+    y=PolynomialRing(FF,"y")
+    tmp=roots(sum([FF(coeff(P,i))*y^i for i in 0:degree(P)])) # not testing if there is a root here...
     return FF, tmp[1]
 end
 

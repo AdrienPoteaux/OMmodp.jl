@@ -38,5 +38,7 @@ function TestPhiHenselKt1t2()
     fac=res[3][4]
     g,h=[i.first^i.second for i in fac]
     v=4*72*vals[2]
-    return PhiHensel(P,g,h,v,v,Phi,vals,Lambda,36,2*vals[2])
+    z = PolynomialRing(QQ, "z")[2]
+    Ka, a = NumberField(z^2-2, "a")
+    return PhiHensel(P,g,h,v,v,Phi,vals,Lambda,36,Ka(12))
 end

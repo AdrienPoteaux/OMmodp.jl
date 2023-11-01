@@ -134,10 +134,10 @@ function FirstApproximants(P::Generic.Poly{T}) where {T}
         end
         # Now multiplying elements of Lambda by the appropriate powers of z.
         for j in 1:k
+            # Expressing FirstGamma[j] in the basis Gamma.
             tmp=GammaCofactors(Gamma,FirstGamma[j])
-            # la sortie dans tmp c'est des rationnels
-            # mais ici on sait que ce sont des entiers (car on decompose un element de Gamma_i dans une base de Gamma_i)
-            # on passe donc par numerator
+            # elements of tmp are rationals, but we are decomposing an element of Gamma_i in its basis
+            # so we know they are integers. We use numerator to convert them.
             Lambda[1][j]=Lambda[1][j]*z^(-Int(numerator(sum([tmp[i]*L[i] for i in 1:k]))))
         end
         for i in 2:length(Lambda)
