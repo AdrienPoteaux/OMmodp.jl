@@ -152,3 +152,45 @@ function PhiExpMonomials(P::Generic.Poly{T},Phi::Vector) where {T}
     # below we use the assumption that Phi[1] has degree 1 (by taking the 0 coefficient)
     return filter(x->x[1]!=0,[[coeff(tmp[i],0),i-1] for i in eachindex(tmp)])
 end
+
+"""
+    PhiMonomialsEval(dvt::Vector,Phi::Vector)
+
+Computes the "evaluation" of the Phi-adic expansion (as computed by PhiExpMonomials)
+Outputs a polynomial in A[x]
+"""
+### TODO ? working, but wondering if L should be A and not A[x] when k=1. Does it change anything on an efficiency point of view ?
+# In the recursive calls, we are computing several times the same powers of Phi[i] ; i < length(Phi). Could be optimised, but easily ?
+function PhiMonomialsEval(dvt::Vector,Phi::Vector)
+    L=Phi[1].parent
+    if dvt == [] return L(0) end
+    k=length(Phi)
+    phiexps = unique([i[k+1] for i in dvt])
+    d = maximum(phiexps)
+    if k>1
+        coeffs=[PhiMonomialsEval(filter(x->x[k+1]==i,dvt),Phi[1:k-1]) for i in 0:d]
+    else
+        tmp=[filter(x->x[k+1]==i,dvt) for i in 0:d]
+        coeffs=[i==[] ? L(0) : L(i[1][1]) for i in tmp] # there is a single element in each non empty list.
+    end
+    # at that points, coeffs is a list of [ai] such that the output will be \sum_i ai*Phi[k]^i
+    n=2
+    powphi=[Phi[k]] # we will do a divide and conquer approach using powers of 2 (would a binaty decomposition of d be better ? Not sure).
+    while n<d
+        powphi=[powphi;powphi[end]^2]
+        n*=2
+    end
+    n=1
+    while n<=length(powphi)
+        tmp = []
+        for i in 1:div(length(coeffs),2)
+            tmp=[tmp;coeffs[2*i-1]+powphi[n]*coeffs[2*i]]
+        end
+        if rem(length(coeffs),2) == 1
+            tmp=[tmp;coeffs[end]]
+        end
+        coeffs=tmp
+        n+=1
+    end
+    return L(coeffs[1])
+end
