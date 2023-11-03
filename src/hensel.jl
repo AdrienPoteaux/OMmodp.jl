@@ -34,9 +34,9 @@ function PhiTruncate(P::Generic.Poly{T}, Phi::Vector, vals::Vector, n) where {T}
     ## The "evaluation" below is slow ; need a faster algorithm
     for i in dvt
         tmp=BaseTruncation(i[1],n-sum(vals.*i[2:end]))
-        if tmp!=0 res=[res;[tmp;i[2:end]]] end
+        if tmp!=0 res=[res;[[tmp;i[2:end]]]] end
     end
-    return PhiMonomialsEval(res)
+    return PhiMonomialsEval(res,Phi)
 end
 
 # In  : mu(F-G*H)>=n+mu(F), mu(S*G+T*H-1)>=n
