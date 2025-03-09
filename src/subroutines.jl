@@ -130,7 +130,7 @@ end
     PhiExpMonomials(P::Generic.Poly{T},Phi::Vector) where {T}
 
 Computes the Phi-adic expansion of F, expressed as a list of monomials
-  (i.e. a list of [c,i_0,...,i_k] providing a coefficient - element of A - and a list of exponents - for the Phi[j]).
+  (i.e. a list of [cqi_0,...,i_k] providing a coefficient - element of A - and a list of exponents - for the Phi[j]).
 
 Phi is a table of polynomials ; we assume that Phi[1] has degree 1 (as in NaOl21)
 """

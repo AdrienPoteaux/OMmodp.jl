@@ -1,5 +1,5 @@
 function BaseGenerators(A)
-    error("BaseGenerators must be defined for our base ring. It is supposed to provide generators of the base ring")
+    error("BaseGenerators must be defined for our base ring. It is supposed to provide generators of the base ring ; input type: ",typeof(A))
 end
 
 function ResidueField(A)
@@ -75,7 +75,7 @@ end
 
     Test if the polynomial P is irreducible over its base ring.
     If it is, the function outputs true, together with the list of successive
-    (key polynomial, associated polynomial, irreducible factor of the residual polynomial)
+    (key polynomial, associated valuation, irreducible factor of the residual polynomial)
 
     If it is not, the same list is provided (up to the point where we prove non irreducibility)
     A third element is returned : [Phi,vals,Lambda,NP or RP] where
@@ -130,7 +130,7 @@ function FirstApproximants(P::Generic.Poly{T}) where {T}
             # converting correcting elements in the new residue field.
             Lambda=[[[F(i) for i in Lambda[1]]];[F(Lambda[i]) for i in 2:length(Lambda)]]
         else 
-            z=-coeff(R,0) # assuming R is monic here
+            z=-coeff(R,0) # assuming R is monic here (true in our context where we factorise, false in general ; I guess we could use roots ?)
         end
         # Now multiplying elements of Lambda by the appropriate powers of z.
         for j in 1:k
@@ -138,11 +138,11 @@ function FirstApproximants(P::Generic.Poly{T}) where {T}
             tmp=GammaCofactors(Gamma,FirstGamma[j])
             # elements of tmp are rationals, but we are decomposing an element of Gamma_i in its basis
             # so we know they are integers. We use numerator to convert them.
-            Lambda[1][j]=Lambda[1][j]*z^(-Int(numerator(sum([tmp[i]*L[i] for i in 1:k]))))
+            Lambda[1][j]=Lambda[1][j]*z^(-numerator(sum([tmp[i]*L[i] for i in 1:k])))
         end
         for i in 2:length(Lambda)
             tmp=GammaCofactors(Gamma,vals[i-1])
-            Lambda[i]=Lambda[i]*z^(-numerator(sum([tmp[i]*L[i] for i in 1:k])))
+            Lambda[i]=Lambda[i]*z^(-numerator(sum([tmp[j]*L[j] for j in 1:k])))
         end
         Lambda=[Lambda;z^Lb]
     end

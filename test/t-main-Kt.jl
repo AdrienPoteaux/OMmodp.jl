@@ -13,3 +13,7 @@ function TestFirstApproximantsKt()
     if [i[2] for i in res[2]]!=[0,2//3,13//6,44//5] return false end
     return true
 end
+
+function TestHenselKt()
+## TODO
+end

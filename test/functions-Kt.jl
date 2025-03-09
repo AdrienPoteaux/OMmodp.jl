@@ -2,12 +2,24 @@ function Main.OMFacto.:CoeffAndExp(elt::fpRelPowerSeriesRingElem, n::Int64) # IC
     return [coeff(elt,n),[n]]
 end
 
+function Main.OMFacto.:CoeffAndExp(elt::QQRelPowerSeriesRingElem, n::Int64) # ICI GENERIQUE j'aimerais preciser le RingElem en K[[t]]; Comment faire ?
+    return [coeff(elt,n),[n]]
+end
+
 function Main.OMFacto.BaseGenerators(A::fpRelPowerSeriesRing)
+    return [gen(A)]
+end
+
+function Main.OMFacto.BaseGenerators(A::QQRelPowerSeriesRing)
     return [gen(A)]
 end
 
 function Main.OMFacto.:ResidueField(A::fpRelPowerSeriesRing)
     return base_ring(A) # enough ?
+end
+
+function Main.OMFacto.:ResidueField(A::QQRelPowerSeriesRing)
+    return base_ring(A)
 end
 
 function Main.OMFacto.:GammaCofactors(Gamma::Vector{Rational{Int}},gamma::Rational{Int})

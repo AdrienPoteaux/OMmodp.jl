@@ -40,10 +40,11 @@ function PhiTruncate(P::Generic.Poly{T}, Phi::Vector, vals::Vector, n) where {T}
 end
 
 # In  : mu(F-G*H)>=n+mu(F), mu(S*G+T*H-1)>=n
-# Out : n becomes 2*N
+# Out : n becomes 2*n
 # vG and vH provide the valuations of respectively G and H
 # ATTENTION : S et T ont des valuations negatives... donc n'appartiennent pas forcément au monde de base
 function PhiHenselStep(F::Generic.Poly{X},G::Generic.Poly{X},H::Generic.Poly{X},S::Generic.Poly{X},T::Generic.Poly{X},Phi::Vector,vals::Vector,n,vG,vH) where {X}
+    # tried to minimise the number of PhiTruncate on some "big" examples... this did not seem faster, on the contrary.
     E=PhiTruncate(F-G*H,Phi,vals,2*n+vG+vH)
     q,r=divrem(S*E,H)
     q=PhiTruncate(q,Phi,vals,2*n)

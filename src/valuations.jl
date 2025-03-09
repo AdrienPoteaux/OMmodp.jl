@@ -197,7 +197,7 @@ function PhiNewtonPolygon(elt::Vector, vals::Vector)
 end
 
 function CoeffAndExp(elt,n)
-  error("CoeffAndExp must be defined for our base ring.")
+  error("CoeffAndExp must be defined for our base ring ; elt type is: ", typeof(elt),n,typeof(n))
 end
 
 # More an intern function than anything else
@@ -306,7 +306,7 @@ function Representant(R,v,Phi::Vector,vals::Vector,Lambda::Vector)
   Gamma=map(valuation,pi)
   r=length(vals)
   F=parent(Lambda[1][1])
-  n=degree(F)
+  n=degree(F) ## C'est quoi ca ? -> marche sur les corps finis mais pas pour tout visiblement. GENERIQUE
   maxdegs=[[degree(Phi[i])-1 for i in 2:r];degree(R)]
   for i in 0:degree(R)
     if coeff(R,i)!=0
