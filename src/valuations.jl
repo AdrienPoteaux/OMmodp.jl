@@ -160,8 +160,9 @@ function PhiNewtonPolygon(elt::Vector, vals::Vector)
   while (valuations[r] != v)
     r-=1
   end
+  K = parent(valuations[1])
   # Now storing the points we have to consider for the lowest convex hull
-  left_points = [[first-1,valuations[first]]] # will contain the negative slopes
+  left_points = [[K(first-1),valuations[first]]] # will contain the negative slopes
   if first != l
     tmp = (valuations[l]-valuations[first])//(l-first)
     a = -numerator(tmp)
@@ -170,17 +171,17 @@ function PhiNewtonPolygon(elt::Vector, vals::Vector)
     # the line from [first-1,valuations[first]] to [l-1,valuations[l]] is a*i+b*j=c
     for i in first+1:l-1
       if (valuations[i] != -1) && (a*(i-1)+b*valuations[i]<c) # this point can be in the lowest convex hull (-1 means a 0 coefficient, so is not considered).
-        left_points = [left_points;[[i-1,valuations[i]]]]
+        left_points = [left_points;[[K(i-1),valuations[i]]]]
       end
     end
-    left_points = [left_points;[[l-1,valuations[l]]]]
+    left_points = [left_points;[[K(l-1),valuations[l]]]]
   end
   points = LowerConvexHull(left_points)
   if l!=r
-    points = [points;[[r-1,valuations[r]]]]
+    points = [points;[[K(r-1),valuations[r]]]]
   end
   if r != last
-    right_points=[[r-1,valuations[r]]]
+    right_points=[[K(r-1),valuations[r]]]
     tmp = (valuations[r]-valuations[last])//(r-last)
     a = -numerator(tmp)
     b = denominator(tmp)
@@ -188,10 +189,10 @@ function PhiNewtonPolygon(elt::Vector, vals::Vector)
     # the line from [r-1,valuations[r]] to [last-1,valuations[last]] is a*i+b*j=c
     for i in r+1:last-1
       if (valuations[i] != -1) && (a*(i-1)+b*valuations[i]<c) # this point can be in the lowest convex hull.
-        right_points=[right_points;[[i-1,valuations[i]]]]
+        right_points=[right_points;[[K(i-1),valuations[i]]]]
       end
     end
-    right_points=[right_points;[[last-1,valuations[last]]]]
+    right_points=[right_points;[[K(last-1),valuations[last]]]]
     tmp = LowerConvexHull(right_points)
     points=[points;tmp[2:length(tmp)]]
   end
