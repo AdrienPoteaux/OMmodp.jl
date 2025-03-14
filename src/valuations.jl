@@ -21,6 +21,7 @@ function LowerConvexHull(L) # based on Graham algorithm
   if length(L) <= 2
     return L
   end
+  stop = L[length(L)][1] # if the input has increasing abscissae, we store the end to compute the *lower* convex hull only.
   # comparison function
   function cmp(A,B)
     O = L[1]
@@ -31,17 +32,18 @@ function LowerConvexHull(L) # based on Graham algorithm
     return turn > 0 # turn > 0 means OA < OB
   end
   sorted = [[L[1]] ; sort(L[2:length(L)],lt=cmp)]
-  s=Stack{Vector{Rational}}()
-  push!(s,L[1])
-  push!(s,L[2])
+  s=Stack{parent(L[1])}()
+  push!(s,sorted[1])
+  push!(s,sorted[2])
   i=3
   while i<=length(L)
     if length(s) == 1
-      push!(s,L[i])
+      push!(s,sorted[i])
       i+=1
       continue
     end
     curr = first(s)
+    if (curr[1] == stop) break end # we found the lower convex hull
     prec = _get_2nd_elt(s)
     if _turn_left(prec,curr,L[i])
       push!(s,L[i])
