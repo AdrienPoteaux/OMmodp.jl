@@ -27,7 +27,7 @@ function LowerConvexHull(L) # based on Graham algorithm
     O = L[1]
     turn = (A[1]-O[1])*(B[2]-O[2]) - (A[2]-O[2])*(B[1]-O[1])
     if turn == 0 # A, 0 ,B on the same line.
-      return A[1] > B[1]
+      return A[1] < B[1]
     end
     return turn > 0 # turn > 0 means OA < OB
   end
